@@ -66,7 +66,6 @@ export interface KuzzleError {
     toJSON(): {
         message:string
         status: number
-        stack: string
     }
 }
 
@@ -77,7 +76,6 @@ export interface PartialError extends KuzzleError {
     toJSON(): {
         message:string
         status: number
-        stack: string
         errors: any[]
         count: number
     }

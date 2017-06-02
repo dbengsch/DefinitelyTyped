@@ -94,6 +94,7 @@ export interface PluginImplementationError extends KuzzleError {}
 export interface ServiceUnavailableError extends KuzzleError {}
 export interface SizeLimitError extends KuzzleError {}
 export interface UnauthorizedError extends KuzzleError {}
+export interface PreconditionError extends KuzzleError {}
 
 export interface KuzzleErrors {
     BadRequestError: {
@@ -134,6 +135,9 @@ export interface KuzzleErrors {
     }
     UnauthorizedError: {
         new (message: any|string, status?: number): UnauthorizedError
+    }
+    PreconditionError: {
+        new (message: any|string, status?: number): PreconditionError
     }
 }
 

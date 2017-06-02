@@ -70,10 +70,6 @@ export interface KuzzlePluginContext {
     accessors: {
         log: KuzzlePluginLogs
         passport: KuzzlePluginPassport
-        users: {
-            load(id: string): Promise<any>
-            create(id: string, profile: string|string[], userInfo: any): Promise<any>
-        }
         validation: {
             addType(): void
             validate(): KuzzleRequest|{errorMessages: string[], validation: any}

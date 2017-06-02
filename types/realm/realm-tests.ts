@@ -1,5 +1,4 @@
 import * as Realm from 'realm';
-import { ListView } from 'realm/react-native';
 
 // schema test
 const personSchema = {
@@ -67,7 +66,6 @@ const currentVersion = Realm.schemaVersion(Realm.defaultPath);
 Realm.Sync.User.register('http://localhost:9080', 'username@example.com', 'p@s$w0rd', (error, user) => { /* ... */ });
 
 Realm.Sync.User.login('http://localhost.com:9080', 'username@example.com', 'p@s$w0rd', (error, user) => {
-
     const todoSchema = {
         name: 'Todo',
         primaryKey: 'id',
@@ -98,6 +96,3 @@ const users = Realm.Sync.User.all;
 
 // access control test
 const managementRealm = user.openManagementRealm();
-
-// ListView test
-const ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});

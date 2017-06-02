@@ -24,6 +24,8 @@ declare class WebSocket extends events.EventEmitter {
     supports: any;
     upgradeReq: http.IncomingMessage;
     protocol: string;
+    bufferedAmount: number;
+    binaryType: string;
 
     CONNECTING: number;
     OPEN: number;
@@ -81,7 +83,7 @@ declare namespace WebSocket {
 
     type VerifyClientCallbackSync = (info: { origin: string; secure: boolean; req: http.IncomingMessage }) => boolean;
     type VerifyClientCallbackAsync = (info: { origin: string; secure: boolean; req: http.IncomingMessage }
-        , callback: (res: boolean) => void) => void;
+        , callback: (res: boolean, code?: number, message?: string) => void) => void;
 
     export interface IClientOptions {
         protocol?: string;
@@ -111,6 +113,7 @@ declare namespace WebSocket {
         host?: string;
         port?: number;
         server?: http.Server | https.Server;
+        backlog?: number;
         verifyClient?: VerifyClientCallbackAsync | VerifyClientCallbackSync;
         handleProtocols?: any;
         path?: string;

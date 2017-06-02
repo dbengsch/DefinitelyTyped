@@ -3,7 +3,8 @@
 // Definitions by: Bill Armstrong <https://github.com/BillArmstrong>,
 //   Yuki Kokubun <https://github.com/Kuniwak>,
 //   Craig Nishina <https://github.com/cnishina>,
-//   Simon Gellis <https://github.com/SupernaviX>
+//   Simon Gellis <https://github.com/SupernaviX>,
+//   Ben Dixon <https://github.com/bendxn>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.1
 
@@ -241,7 +242,6 @@ export namespace error {
 }
 
 export namespace logging {
-
   /**
    * A hash describing log preferences.
    * @typedef {Object.<logging.Type, logging.LevelName>}
@@ -268,7 +268,7 @@ export namespace logging {
    * Common log types.
    * @enum {string}
    */
-  var Type: IType;
+  const Type: IType;
 
   /**
    * Defines a message level that may be used to control logging output.
@@ -556,6 +556,13 @@ export namespace logging {
 
 export namespace promise {
   // region Functions
+
+  /**
+   * Set `USE_PROMISE_MANAGER` to `false` to disable the promise manager.
+   * This is useful, if you use async/await (see https://github.com/SeleniumHQ/selenium/issues/2969
+   * and https://github.com/SeleniumHQ/selenium/issues/3037).
+   */
+  let USE_PROMISE_MANAGER: boolean;
 
   /**
    * Given an array of promises, will return a promise that will be fulfilled
@@ -984,28 +991,22 @@ export namespace promise {
      */
     constructor(resolver: (resolve: IFulfilledCallback<T>, reject: IRejectedCallback) => void, opt_flow?: ControlFlow);
 
-      //region Static Methods
+    /**
+     * Creates a promise that is immediately resolved with the given value.
+     *
+     * @param {T=} opt_value The value to resolve.
+     * @return {!ManagedPromise<T>} A promise resolved with the given value.
+     * @template T
+     */
+    static resolve<T>(opt_value?: T): Promise<T>;
 
-      /**
-       * Creates a promise that is immediately resolved with the given value.
-       *
-       * @param {T=} opt_value The value to resolve.
-       * @return {!ManagedPromise<T>} A promise resolved with the given value.
-       * @template T
-       */
-      static resolve<T>(opt_value?: T): Promise<T>;
-
-      /**
-       * Creates a promise that is immediately rejected with the given reason.
-       *
-       * @param {*=} opt_reason The rejection reason.
-       * @return {!ManagedPromise<?>} A new rejected promise.
-       */
-      static reject(opt_reason?: any): Promise<never>;
-
-      //endregion
-
-    // region Methods
+    /**
+     * Creates a promise that is immediately rejected with the given reason.
+     *
+     * @param {*=} opt_reason The rejection reason.
+     * @return {!ManagedPromise<?>} A new rejected promise.
+     */
+    static reject(opt_reason?: any): Promise<never>;
 
     /**
      * Registers listeners for when this instance is resolved.
@@ -1046,9 +1047,6 @@ export namespace promise {
      * @template R
      */
     catch<R>(errback: (err: any) => R | IThenable<R>): Promise<R>;
-
-
-    // endregion
   }
 
   /**
@@ -1124,10 +1122,10 @@ export namespace promise {
   }
 
   interface IControlFlowTimer {
-    clearInterval: (ms: number) => void;
-    clearTimeout: (ms: number) => void;
-    setInterval: (fn: Function, ms: number) => number;
-    setTimeout: (fn: Function, ms: number) => number;
+    clearInterval(ms: number): void;
+    clearTimeout(ms: number): void;
+    setInterval(fn: Function, ms: number): number;
+    setTimeout(fn: Function, ms: number): number;
   }
 
   interface IEventType {
@@ -1314,7 +1312,6 @@ export class WebElementCondition extends Condition<WebElement> {
 }
 
 export namespace until {
-
     /**
    * Creates a condition that will wait until the input driver is able to switch
    * to the designated frame. The target frame may be specified as
@@ -1522,17 +1519,17 @@ export namespace until {
   function urlMatches(regex: RegExp): Condition<boolean>;
 }
 
-interface ILocation {
+export interface ILocation {
   x: number;
   y: number;
 }
 
-interface ISize {
+export interface ISize {
   width: number;
   height: number;
 }
 
-interface IButton {
+export interface IButton {
   LEFT: string;
   MIDDLE: string;
   RIGHT: string;
@@ -1545,9 +1542,9 @@ interface IButton {
  *
  * @enum {string}
  */
-export var Button: IButton;
+export const Button: IButton;
 
-interface IKey {
+export interface IKey {
   NULL: string;
   CANCEL: string;  // ^break
   HELP: string;
@@ -1624,7 +1621,7 @@ interface IKey {
     * @param {...string} var_args The key sequence to concatenate.
     * @return {string} The null-terminated key sequence.
     */
-  chord: (...var_args: Array<string|IKey>) => string;
+  chord(...var_args: Array<string|IKey>): string;
 }
 
 /**
@@ -1634,7 +1631,7 @@ interface IKey {
  *
  * @enum {string}
  */
-export var Key: IKey;
+export const Key: IKey;
 
 /**
  * Class for defining sequences of complex user interactions. Each sequence
@@ -1652,7 +1649,6 @@ export var Key: IKey;
  *
  */
 export class ActionSequence {
-
   // region Constructors
 
   /**
@@ -1827,7 +1823,6 @@ export class ActionSequence {
   // endregion
 }
 
-
 /**
  * Class for defining sequences of user touch interactions. Each sequence
  * will not be executed until {@link #perform} is called.
@@ -1847,14 +1842,12 @@ export class TouchSequence {
     */
   constructor(driver: WebDriver);
 
-
   /**
    * Executes this action sequence.
    * @return {!promise.Promise} A promise that will be resolved once
    *     this sequence has completed.
    */
   perform(): promise.Promise<void>;
-
 
   /**
    * Taps an element.
@@ -1864,7 +1857,6 @@ export class TouchSequence {
    */
   tap(elem: WebElement): TouchSequence;
 
-
   /**
    * Double taps an element.
    *
@@ -1872,7 +1864,6 @@ export class TouchSequence {
    * @return {!TouchSequence} A self reference.
    */
   doubleTap(elem: WebElement): TouchSequence;
-
 
   /**
    * Long press on an element.
@@ -1882,7 +1873,6 @@ export class TouchSequence {
    */
   longPress(elem: WebElement): TouchSequence;
 
-
   /**
    * Touch down at the given location.
    *
@@ -1890,7 +1880,6 @@ export class TouchSequence {
    * @return {!TouchSequence} A self reference.
    */
   tapAndHold(location: ILocation): TouchSequence;
-
 
   /**
    * Move a held {@linkplain #tapAndHold touch} to the specified location.
@@ -1900,7 +1889,6 @@ export class TouchSequence {
    */
   move(location: ILocation): TouchSequence;
 
-
   /**
    * Release a held {@linkplain #tapAndHold touch} at the specified location.
    *
@@ -1908,7 +1896,6 @@ export class TouchSequence {
    * @return {!TouchSequence} A self reference.
    */
   release(location: ILocation): TouchSequence;
-
 
   /**
    * Scrolls the touch screen by the given offset.
@@ -1948,12 +1935,12 @@ export class TouchSequence {
   flickElement(elem: WebElement, offset: IOffset, speed: number): TouchSequence;
 }
 
-interface IOffset {
+export interface IOffset {
   x: number;
   y: number;
 }
 
-interface ISpeed {
+export interface ISpeed {
   xspeed: number;
   yspeed: number;
 }
@@ -2019,7 +2006,6 @@ export class Alert {
   sendKeys(text: string): promise.Promise<void>;
 
   // endregion
-
 }
 
 /**
@@ -2092,7 +2078,7 @@ export class AlertPromise extends Alert implements promise.IThenable<Alert> {
  * Recognized browser names.
  * @enum {string}
  */
-interface IBrowser {
+export interface IBrowser {
   ANDROID: string;
   CHROME: string;
   EDGE: string;
@@ -2107,18 +2093,18 @@ interface IBrowser {
   HTMLUNIT: string;
 }
 
-export var Browser: IBrowser;
+export const Browser: IBrowser;
 
-interface ProxyConfig {
+export interface ProxyConfig {
   proxyType: string;
   proxyAutoconfigUrl?: string;
   ftpProxy?: string;
   httpProxy?: string;
   sslProxy?: string;
   noProxy?: string;
-  socksProxy?: string,
-  socksUsername?: string,
-  socksPassword?: string
+  socksProxy?: string;
+  socksUsername?: string;
+  socksPassword?: string;
 }
 
 /**
@@ -2161,7 +2147,6 @@ interface ProxyConfig {
  *     node mytest.js
  */
 export class Builder {
-
   // region Constructors
 
   /**
@@ -2399,7 +2384,6 @@ export class Builder {
  * @final
  */
 export class By {
-
   /**
    * @param {string} using the name of the location strategy to use.
    * @param {string} value the value to search for.
@@ -2522,7 +2506,7 @@ export class By {
  *     {tagName: string}|
  *     {xpath: string})}
  */
-type ByHash = { className: string } |
+export type ByHash = { className: string } |
   { css: string } |
   { id: string } |
   { js: string } |
@@ -2532,14 +2516,13 @@ type ByHash = { className: string } |
   { tagName: string } |
   { xpath: string };
 
-  export type Locator = By | Function | ByHash;
+export type Locator = By | Function | ByHash;
 
 /**
  * Common webdriver capability keys.
  * @enum {string}
  */
-interface ICapability {
-
+export interface ICapability {
   /**
    * Indicates whether a driver should accept all SSL certs by default. This
    * capability only applies when requesting a new session. To query whether
@@ -2547,7 +2530,6 @@ interface ICapability {
    * {@link Capability.SECURE_SSL}.
    */
   ACCEPT_SSL_CERTS: string;
-
 
   /**
    * The browser name. Common browser names are defined in the
@@ -2628,7 +2610,7 @@ interface ICapability {
   VERSION: string;
 }
 
-export var Capability: ICapability;
+export const Capability: ICapability;
 
 export class Capabilities {
   // region Constructors
@@ -2681,14 +2663,12 @@ export class Capabilities {
    */
   setProxy(proxy: ProxyConfig): Capabilities;
 
-
   /**
    * Sets whether native events should be used.
    * @param {boolean} enabled Whether to enable native events.
    * @return {!Capabilities} A self reference.
    */
   setEnableNativeEvents(enabled: boolean): Capabilities;
-
 
   /**
    * Sets how elements should be scrolled into view for interaction.
@@ -2793,7 +2773,7 @@ export class Capabilities {
 /**
  * An enumeration of valid command string.
  */
-interface ICommandName {
+export interface ICommandName {
   GET_SERVER_STATUS: string;
 
   NEW_SESSION: string;
@@ -2916,7 +2896,7 @@ interface ICommandName {
   UPLOAD_FILE: string;
 }
 
-export var CommandName: ICommandName;
+export const CommandName: ICommandName;
 
 /**
  * Describes a command to be executed by the WebDriverJS framework.
@@ -3046,7 +3026,6 @@ export class EventEmitter {
    */
   addListener(type: string, fn: Function, opt_scope?: any, opt_oneshot?: boolean): EventEmitter;
 
-
   /**
    * Registers a one-time listener which will be called only the first time an
    * event is emitted, after which it will be removed.
@@ -3084,7 +3063,6 @@ export class EventEmitter {
 
   // endregion
 }
-
 
 /**
  * Interface for navigating back and forth in the browser history.
@@ -3140,8 +3118,7 @@ export class Navigation {
   // endregion
 }
 
-interface IWebDriverOptionsCookie {
-
+export interface IWebDriverOptionsCookie {
   /**
    * The name of the cookie.
    */
@@ -3188,9 +3165,9 @@ interface IWebDriverOptionsCookie {
    * @type {(!Date|number|undefined)}
    */
   expiry?: number | Date;
-  }
+}
 
-  interface IWebDriverCookie extends IWebDriverOptionsCookie {
+export interface IWebDriverCookie extends IWebDriverOptionsCookie {
     /**
      * When the cookie expires.
      *
@@ -3199,7 +3176,7 @@ interface IWebDriverOptionsCookie {
      *
      * @type {(!number|undefined)}
      */
-    expiry?: number
+    expiry?: number;
 }
 
 /**
@@ -3354,7 +3331,6 @@ export class Timeouts {
  * An interface for managing the current window.
  */
 export class Window {
-
   // region Constructors
 
   /**
@@ -3417,7 +3393,6 @@ export class Window {
  * Interface for managing WebDriver log records.
  */
 export class Logs {
-
   // region Constructors
 
   /**
@@ -3460,7 +3435,6 @@ export class Logs {
  * An interface for changing the focus of the driver to another frame or window.
  */
 export class TargetLocator {
-
   // region Constructors
 
   /**
@@ -3573,10 +3547,10 @@ export class FileDetector {
   handleFile(driver: WebDriver, path: string): promise.Promise<string>;
 }
 
-  type CreateSessionCapabilities = Capabilities | {
-    desired?: Capabilities,
-    required?: Capabilities
-  }
+export type CreateSessionCapabilities = Capabilities | {
+  desired?: Capabilities,
+  required?: Capabilities
+};
 
 /**
  * Creates a new WebDriver client, which provides control over a browser.
@@ -3708,7 +3682,6 @@ export class WebDriver {
    */
   schedule<T>(command: Command, description: string): promise.Promise<T>;
 
-
   /**
    * Sets the {@linkplain input.FileDetector file detector} that should be
    * used with this instance.
@@ -3716,20 +3689,17 @@ export class WebDriver {
    */
   setFileDetector(detector: FileDetector): void;
 
-
   /**
    * @return {!promise.Promise.<!Session>} A promise for this
    *     client's session.
    */
   getSession(): promise.Promise<Session>;
 
-
   /**
    * @return {!promise.Promise.<!Capabilities>} A promise
    *     that will resolve with the this instance's capabilities.
    */
   getCapabilities(): promise.Promise<Capabilities>;
-
 
   /**
    * Schedules a command to quit the current session. After calling quit, this
@@ -3755,7 +3725,6 @@ export class WebDriver {
    */
   actions(): ActionSequence;
 
-
   /**
    * Creates a new touch sequence using this driver. The sequence will not be
    * scheduled for execution until {@link actions.TouchSequence#perform} is
@@ -3769,7 +3738,6 @@ export class WebDriver {
    * @return {!actions.TouchSequence} A new touch sequence for this instance.
    */
   touchActions(): TouchSequence;
-
 
   /**
    * Schedules a command to execute JavaScript in the context of the currently
@@ -4145,25 +4113,25 @@ export class WebDriver {
   // endregion
 }
 
-  /**
-   * A thenable wrapper around a {@linkplain webdriver.IWebDriver IWebDriver}
-   * instance that allows commands to be issued directly instead of having to
-   * repeatedly call `then`:
-   *
-   *     let driver = new Builder().build();
-   *     driver.then(d => d.get(url));  // You can do this...
-   *     driver.get(url);               // ...or this
-   *
-   * If the driver instance fails to resolve (e.g. the session cannot be created),
-   * every issued command will fail.
-   *
-   * @extends {webdriver.IWebDriver}
-   * @extends {promise.IThenable<!webdriver.IWebDriver>}
-   * @interface
-   */
-  interface ThenableWebDriver extends WebDriver, promise.IThenable<WebDriver> { }
+/**
+ * A thenable wrapper around a {@linkplain webdriver.IWebDriver IWebDriver}
+ * instance that allows commands to be issued directly instead of having to
+ * repeatedly call `then`:
+ *
+ *     let driver = new Builder().build();
+ *     driver.then(d => d.get(url));  // You can do this...
+ *     driver.get(url);               // ...or this
+ *
+ * If the driver instance fails to resolve (e.g. the session cannot be created),
+ * every issued command will fail.
+ *
+ * @extends {webdriver.IWebDriver}
+ * @extends {promise.IThenable<!webdriver.IWebDriver>}
+ * @interface
+ */
+export interface ThenableWebDriver extends WebDriver, promise.IThenable<WebDriver> { }
 
-interface IWebElementId {
+export interface IWebElementId {
   [ELEMENT: string]: string;
 }
 
@@ -4190,7 +4158,7 @@ interface IWebElementId {
  *   });
  * </code></pre>
  */
-interface IWebElement {
+export interface IWebElement {
   // region Methods
 
   /**
@@ -4385,7 +4353,7 @@ interface IWebElement {
   // endregion
 }
 
-interface IWebElementFinders {
+export interface IWebElementFinders {
   /**
    * Schedule a command to find a descendant of this element. If the element
    * cannot be found, a {@code bot.ErrorCode.NO_SUCH_ELEMENT} result will
@@ -4447,7 +4415,7 @@ interface IWebElementFinders {
  * @constructor
  * @template T
  */
-interface Serializable<T> {
+export interface Serializable<T> {
   /**
    * Returns either this instance's serialized represention, if immediately
    * available, or a promise for its serialized representation. This function is
@@ -4842,7 +4810,6 @@ export class WebElementPromise extends WebElement implements promise.IThenable<W
    */
   then<R>(opt_callback?: (value: WebElement) => R, opt_errback?: (error: any) => any): promise.Promise<R>;
 
-
   /**
    * Registers a listener for when this promise is rejected. This is synonymous
    * with the {@code catch} clause in a synchronous API:
@@ -4873,7 +4840,6 @@ export class WebElementPromise extends WebElement implements promise.IThenable<W
  * Contains information about a WebDriver session.
  */
 export class Session {
-
   // region Constructors
 
   /**

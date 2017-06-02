@@ -22,7 +22,6 @@ class MyText extends React.Component<MyTextProperties, {}> {
 }
 
 class ScrollableTabViewDemo extends React.Component<{}, {}> {
-
   constructor(props: ScrollableTabViewDemo) {
     super(props);
   }
@@ -37,9 +36,9 @@ class ScrollableTabViewDemo extends React.Component<{}, {}> {
     );
   }
 
-  protected componentWillMount?(): void {
+  componentWillMount?(): void {
   }
 
-  protected componentWillUnmount?(): void {
+  componentWillUnmount?(): void {
   }
 }

@@ -7,12 +7,12 @@
 /// <reference types="rx-core-binding" />
 
 declare namespace Rx {
-    export namespace internals {
+    namespace internals {
         function isEqual(left: any, right: any): boolean;
         function addRef<T>(xs: Observable<T>, r: { getDisposable(): IDisposable; }): Observable<T>;
 
         // Priority Queue for Scheduling
-        export class PriorityQueue<TTime> {
+        class PriorityQueue<TTime> {
             constructor(capacity: number);
 
             length: number;
@@ -29,7 +29,7 @@ declare namespace Rx {
             static count: number;
         }
 
-        export class ScheduledItem<TTime> {
+        class ScheduledItem<TTime> {
             constructor(scheduler: IScheduler, state: any, action: (scheduler: IScheduler, state: any) => IDisposable, dueTime: TTime, comparer?: (x: TTime, y: TTime) => number);
 
             scheduler: IScheduler;
@@ -46,11 +46,11 @@ declare namespace Rx {
         }
     }
 
-    export namespace config {
-        export var Promise: { new <T>(resolver: (resolvePromise: (value: T) => void, rejectPromise: (reason: any) => void) => void): IPromise<T>; };
+    namespace config {
+        let Promise: { new <T>(resolver: (resolvePromise: (value: T) => void, rejectPromise: (reason: any) => void) => void): IPromise<T>; };
     }
 
-    export namespace helpers {
+    namespace helpers {
         function noop(): void;
         function notDefined(value: any): boolean;
         function identity<T>(value: T): T;
@@ -65,7 +65,7 @@ declare namespace Rx {
         function isFunction(value: any): boolean;
     }
 
-    export class CompositeDisposable implements IDisposable {
+    class CompositeDisposable implements IDisposable {
         constructor(...disposables: IDisposable[]);
         constructor(disposables: IDisposable[]);
 
@@ -78,7 +78,7 @@ declare namespace Rx {
         toArray(): IDisposable[];
     }
 
-    export class Disposable implements IDisposable {
+    class Disposable implements IDisposable {
         constructor(action: () => void);
 
         static create(action: () => void): IDisposable;
@@ -88,7 +88,7 @@ declare namespace Rx {
     }
 
     // Single assignment
-    export class SingleAssignmentDisposable implements IDisposable {
+    class SingleAssignmentDisposable implements IDisposable {
         constructor();
 
         isDisposed: boolean;
@@ -100,11 +100,11 @@ declare namespace Rx {
     }
 
     // SerialDisposable it's an alias of SingleAssignmentDisposable
-    export class SerialDisposable extends SingleAssignmentDisposable {
+    class SerialDisposable extends SingleAssignmentDisposable {
         constructor();
     }
 
-    export class RefCountDisposable implements IDisposable {
+    class RefCountDisposable implements IDisposable {
         constructor(disposable: IDisposable);
 
         dispose(): void;
@@ -113,7 +113,7 @@ declare namespace Rx {
         getDisposable(): IDisposable;
     }
 
-    export interface IScheduler {
+    interface IScheduler {
         now(): number;
         isScheduler(value: any): boolean;
 
@@ -135,10 +135,10 @@ declare namespace Rx {
         schedulePeriodicWithState<TState>(state: TState, period: number, action: (state: TState) => TState): IDisposable;
     }
 
-    export interface Scheduler extends IScheduler {
+    interface Scheduler extends IScheduler {
     }
 
-    export interface SchedulerStatic {
+    interface SchedulerStatic {
         new (
             now: () => number,
             schedule: (state: any, action: (scheduler: IScheduler, state: any) => IDisposable) => IDisposable,
@@ -153,7 +153,7 @@ declare namespace Rx {
         timeout: IScheduler;
     }
 
-    export var Scheduler: SchedulerStatic;
+    const Scheduler: SchedulerStatic;
 
     // Current Thread IScheduler
     interface ICurrentThreadScheduler extends IScheduler {
@@ -161,7 +161,7 @@ declare namespace Rx {
     }
 
     // Notifications
-    export class Notification<T> {
+    class Notification<T> {
         accept(observer: IObserver<T>): void;
         accept<TResult>(onNext: (value: T) => TResult, onError?: (exception: any) => TResult, onCompleted?: () => TResult): TResult;
         toObservable(scheduler?: IScheduler): Observable<T>;
@@ -177,13 +177,13 @@ declare namespace Rx {
     }
 
     // Observer
-    export interface IObserver<T> {
+    interface IObserver<T> {
         onNext(value: T): void;
         onError(exception: any): void;
         onCompleted(): void;
     }
 
-    export interface Observer<T> extends IObserver<T> {
+    interface Observer<T> extends IObserver<T> {
         toNotifier(): (notification: Notification<T>) => void;
         asObserver(): Observer<T>;
     }
@@ -193,9 +193,9 @@ declare namespace Rx {
         fromNotifier<T>(handler: (notification: Notification<T>, thisArg?: any) => void): Observer<T>;
     }
 
-    export var Observer: ObserverStatic;
+    const Observer: ObserverStatic;
 
-    export interface IObservable<T> {
+    interface IObservable<T> {
         subscribe(observer: Observer<T>): IDisposable;
         subscribe(onNext?: (value: T) => void, onError?: (exception: any) => void, onCompleted?: () => void): IDisposable;
 
@@ -204,7 +204,7 @@ declare namespace Rx {
         subscribeOnCompleted(onCompleted: () => void, thisArg?: any): IDisposable;
     }
 
-    export interface Observable<T> extends IObservable<T> {
+    interface Observable<T> extends IObservable<T> {
         forEach(onNext?: (value: T) => void, onError?: (exception: any) => void, onCompleted?: () => void): IDisposable;    // alias for subscribe
         toArray(): Observable<T[]>;
 
@@ -352,32 +352,32 @@ declare namespace Rx {
         selectConcat<R>(sequence: Observable<R>): Observable<R>;
 
         /**
-        *  Projects each element of an observable sequence into a new sequence of observable sequences by incorporating the element's index and then
-        *  transforms an observable sequence of observable sequences into an observable sequence producing values only from the most recent observable sequence.
-        * @param selector A transform function to apply to each source element; the second parameter of the function represents the index of the source element.
-        * @param [thisArg] Object to use as this when executing callback.
-        * @returns An observable sequence whose elements are the result of invoking the transform function on each element of source producing an Observable of Observable sequences
-        *  and that at any point in time produces the elements of the most recent inner observable sequence that has been received.
-        */
+         *  Projects each element of an observable sequence into a new sequence of observable sequences by incorporating the element's index and then
+         *  transforms an observable sequence of observable sequences into an observable sequence producing values only from the most recent observable sequence.
+         * @param selector A transform function to apply to each source element; the second parameter of the function represents the index of the source element.
+         * @param [thisArg] Object to use as this when executing callback.
+         * @returns An observable sequence whose elements are the result of invoking the transform function on each element of source producing an Observable of Observable sequences
+         *  and that at any point in time produces the elements of the most recent inner observable sequence that has been received.
+         */
         selectSwitch<TResult>(selector: (value: T, index: number, source: Observable<T>) => Observable<TResult>, thisArg?: any): Observable<TResult>;
         /**
-        *  Projects each element of an observable sequence into a new sequence of observable sequences by incorporating the element's index and then
-        *  transforms an observable sequence of observable sequences into an observable sequence producing values only from the most recent observable sequence.
-        * @param selector A transform function to apply to each source element; the second parameter of the function represents the index of the source element.
-        * @param [thisArg] Object to use as this when executing callback.
-        * @returns An observable sequence whose elements are the result of invoking the transform function on each element of source producing an Observable of Observable sequences
-        *  and that at any point in time produces the elements of the most recent inner observable sequence that has been received.
-        */
+         *  Projects each element of an observable sequence into a new sequence of observable sequences by incorporating the element's index and then
+         *  transforms an observable sequence of observable sequences into an observable sequence producing values only from the most recent observable sequence.
+         * @param selector A transform function to apply to each source element; the second parameter of the function represents the index of the source element.
+         * @param [thisArg] Object to use as this when executing callback.
+         * @returns An observable sequence whose elements are the result of invoking the transform function on each element of source producing an Observable of Observable sequences
+         *  and that at any point in time produces the elements of the most recent inner observable sequence that has been received.
+         */
         flatMapLatest<TResult>(selector: (value: T, index: number, source: Observable<T>) => Observable<TResult>, thisArg?: any): Observable<TResult>;    // alias for selectSwitch
         /**
-        *  Projects each element of an observable sequence into a new sequence of observable sequences by incorporating the element's index and then
-        *  transforms an observable sequence of observable sequences into an observable sequence producing values only from the most recent observable sequence.
-        * @param selector A transform function to apply to each source element; the second parameter of the function represents the index of the source element.
-        * @param [thisArg] Object to use as this when executing callback.
-        * @since 2.2.28
-        * @returns An observable sequence whose elements are the result of invoking the transform function on each element of source producing an Observable of Observable sequences
-        *  and that at any point in time produces the elements of the most recent inner observable sequence that has been received.
-        */
+         *  Projects each element of an observable sequence into a new sequence of observable sequences by incorporating the element's index and then
+         *  transforms an observable sequence of observable sequences into an observable sequence producing values only from the most recent observable sequence.
+         * @param selector A transform function to apply to each source element; the second parameter of the function represents the index of the source element.
+         * @param [thisArg] Object to use as this when executing callback.
+         * @since 2.2.28
+         * @returns An observable sequence whose elements are the result of invoking the transform function on each element of source producing an Observable of Observable sequences
+         *  and that at any point in time produces the elements of the most recent inner observable sequence that has been received.
+         */
         switchMap<TResult>(selector: (value: T, index: number, source: Observable<T>) => TResult, thisArg?: any): Observable<TResult>;    // alias for selectSwitch
 
         skip(count: number): Observable<T>;
@@ -388,46 +388,46 @@ declare namespace Rx {
         filter(predicate: (value: T, index: number, source: Observable<T>) => boolean, thisArg?: any): Observable<T>; // alias for where
 
         /**
-        * Converts an existing observable sequence to an ES6 Compatible Promise
-        * @example
-        * var promise = Rx.Observable.return(42).toPromise(RSVP.Promise);
-        * @param promiseCtor The constructor of the promise.
-        * @returns An ES6 compatible promise with the last value from the observable sequence.
-        */
+         * Converts an existing observable sequence to an ES6 Compatible Promise
+         * @example
+         * var promise = Rx.Observable.return(42).toPromise(RSVP.Promise);
+         * @param promiseCtor The constructor of the promise.
+         * @returns An ES6 compatible promise with the last value from the observable sequence.
+         */
         toPromise<TPromise extends IPromise<T>>(promiseCtor: { new (resolver: (resolvePromise: (value: T) => void, rejectPromise: (reason: any) => void) => void): TPromise; }): TPromise;
         /**
-        * Converts an existing observable sequence to an ES6 Compatible Promise
-        * @example
-        * var promise = Rx.Observable.return(42).toPromise(RSVP.Promise);
-        *
-        * // With config
-        * Rx.config.Promise = RSVP.Promise;
-        * var promise = Rx.Observable.return(42).toPromise();
-        * @param [promiseCtor] The constructor of the promise. If not provided, it looks for it in Rx.config.Promise.
-        * @returns An ES6 compatible promise with the last value from the observable sequence.
-        */
+         * Converts an existing observable sequence to an ES6 Compatible Promise
+         * @example
+         * var promise = Rx.Observable.return(42).toPromise(RSVP.Promise);
+         *
+         * // With config
+         * Rx.config.Promise = RSVP.Promise;
+         * var promise = Rx.Observable.return(42).toPromise();
+         * @param [promiseCtor] The constructor of the promise. If not provided, it looks for it in Rx.config.Promise.
+         * @returns An ES6 compatible promise with the last value from the observable sequence.
+         */
         toPromise(promiseCtor?: { new (resolver: (resolvePromise: (value: T) => void, rejectPromise: (reason: any) => void) => void): IPromise<T>; }): IPromise<T>;
 
         // Experimental Flattening
 
         /**
-        * Performs a exclusive waiting for the first to finish before subscribing to another observable.
-        * Observables that come in between subscriptions will be dropped on the floor.
-        * Can be applied on `Observable<Observable<R>>` or `Observable<IPromise<R>>`.
-        * @since 2.2.28
-        * @returns A exclusive observable with only the results that happen when subscribed.
-        */
+         * Performs a exclusive waiting for the first to finish before subscribing to another observable.
+         * Observables that come in between subscriptions will be dropped on the floor.
+         * Can be applied on `Observable<Observable<R>>` or `Observable<IPromise<R>>`.
+         * @since 2.2.28
+         * @returns A exclusive observable with only the results that happen when subscribed.
+         */
         exclusive<R>(): Observable<R>;
 
         /**
-        * Performs a exclusive map waiting for the first to finish before subscribing to another observable.
-        * Observables that come in between subscriptions will be dropped on the floor.
-        * Can be applied on `Observable<Observable<I>>` or `Observable<IPromise<I>>`.
-        * @since 2.2.28
-        * @param selector Selector to invoke for every item in the current subscription.
-        * @param [thisArg] An optional context to invoke with the selector parameter.
-        * @returns {An exclusive observable with only the results that happen when subscribed.
-        */
+         * Performs a exclusive map waiting for the first to finish before subscribing to another observable.
+         * Observables that come in between subscriptions will be dropped on the floor.
+         * Can be applied on `Observable<Observable<I>>` or `Observable<IPromise<I>>`.
+         * @since 2.2.28
+         * @param selector Selector to invoke for every item in the current subscription.
+         * @param [thisArg] An optional context to invoke with the selector parameter.
+         * @returns {An exclusive observable with only the results that happen when subscribed.
+         */
         exclusiveMap<I, R>(selector: (value: I, index: number, source: Observable<I>) => R, thisArg?: any): Observable<R>;
 
         publish(): ConnectableObservable<T>;
@@ -447,46 +447,46 @@ declare namespace Rx {
         empty<T>(scheduler?: IScheduler): Observable<T>;
 
         /**
-        * This method creates a new Observable sequence from an array object.
-        * @param array An array-like or iterable object to convert to an Observable sequence.
-        * @param mapFn Map function to call on every element of the array.
-        * @param [thisArg] The context to use calling the mapFn if provided.
-        * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
-        */
+         * This method creates a new Observable sequence from an array object.
+         * @param array An array-like or iterable object to convert to an Observable sequence.
+         * @param mapFn Map function to call on every element of the array.
+         * @param [thisArg] The context to use calling the mapFn if provided.
+         * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
+         */
         from<T, TResult>(array: T[], mapFn: (value: T, index: number) => TResult, thisArg?: any, scheduler?: IScheduler): Observable<TResult>;
         /**
-        * This method creates a new Observable sequence from an array object.
-        * @param array An array-like or iterable object to convert to an Observable sequence.
-        * @param [mapFn] Map function to call on every element of the array.
-        * @param [thisArg] The context to use calling the mapFn if provided.
-        * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
-        */
+         * This method creates a new Observable sequence from an array object.
+         * @param array An array-like or iterable object to convert to an Observable sequence.
+         * @param [mapFn] Map function to call on every element of the array.
+         * @param [thisArg] The context to use calling the mapFn if provided.
+         * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
+         */
         from<T>(array: T[], mapFn?: (value: T, index: number) => T, thisArg?: any, scheduler?: IScheduler): Observable<T>;
 
         /**
-        * This method creates a new Observable sequence from an array-like object.
-        * @param array An array-like or iterable object to convert to an Observable sequence.
-        * @param mapFn Map function to call on every element of the array.
-        * @param [thisArg] The context to use calling the mapFn if provided.
-        * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
-        */
+         * This method creates a new Observable sequence from an array-like object.
+         * @param array An array-like or iterable object to convert to an Observable sequence.
+         * @param mapFn Map function to call on every element of the array.
+         * @param [thisArg] The context to use calling the mapFn if provided.
+         * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
+         */
         from<T, TResult>(array: { length: number; [index: number]: T; }, mapFn: (value: T, index: number) => TResult, thisArg?: any, scheduler?: IScheduler): Observable<TResult>;
         /**
-        * This method creates a new Observable sequence from an array-like object.
-        * @param array An array-like or iterable object to convert to an Observable sequence.
-        * @param [mapFn] Map function to call on every element of the array.
-        * @param [thisArg] The context to use calling the mapFn if provided.
-        * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
-        */
+         * This method creates a new Observable sequence from an array-like object.
+         * @param array An array-like or iterable object to convert to an Observable sequence.
+         * @param [mapFn] Map function to call on every element of the array.
+         * @param [thisArg] The context to use calling the mapFn if provided.
+         * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
+         */
         from<T>(array: { length: number; [index: number]: T; }, mapFn?: (value: T, index: number) => T, thisArg?: any, scheduler?: IScheduler): Observable<T>;
 
         /**
-        * This method creates a new Observable sequence from an array-like or iterable object.
-        * @param array An array-like or iterable object to convert to an Observable sequence.
-        * @param [mapFn] Map function to call on every element of the array.
-        * @param [thisArg] The context to use calling the mapFn if provided.
-        * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
-        */
+         * This method creates a new Observable sequence from an array-like or iterable object.
+         * @param array An array-like or iterable object to convert to an Observable sequence.
+         * @param [mapFn] Map function to call on every element of the array.
+         * @param [thisArg] The context to use calling the mapFn if provided.
+         * @param [scheduler] Optional scheduler to use for scheduling.  If not provided, defaults to Scheduler.currentThread.
+         */
         from<T>(iterable: any, mapFn?: (value: any, index: number) => T, thisArg?: any, scheduler?: IScheduler): Observable<T>;
 
         fromArray<T>(array: T[], scheduler?: IScheduler): Observable<T>;
@@ -496,23 +496,23 @@ declare namespace Rx {
         never<T>(): Observable<T>;
 
         /**
-        *  This method creates a new Observable instance with a variable number of arguments, regardless of number or type of the arguments.
-        *
-        * @example
-        *  var res = Rx.Observable.of(1, 2, 3);
-        * @since 2.2.28
-        * @returns The observable sequence whose elements are pulled from the given arguments.
-        */
+         *  This method creates a new Observable instance with a variable number of arguments, regardless of number or type of the arguments.
+         *
+         * @example
+         *  var res = Rx.Observable.of(1, 2, 3);
+         * @since 2.2.28
+         * @returns The observable sequence whose elements are pulled from the given arguments.
+         */
         of<T>(...values: T[]): Observable<T>;
 
         /**
-        *  This method creates a new Observable instance with a variable number of arguments, regardless of number or type of the arguments.
-        * @example
-        *  var res = Rx.Observable.ofWithScheduler(Rx.Scheduler.timeout, 1, 2, 3);
-        * @since 2.2.28
-        * @param [scheduler] A scheduler to use for scheduling the arguments.
-        * @returns The observable sequence whose elements are pulled from the given arguments.
-        */
+         *  This method creates a new Observable instance with a variable number of arguments, regardless of number or type of the arguments.
+         * @example
+         *  var res = Rx.Observable.ofWithScheduler(Rx.Scheduler.timeout, 1, 2, 3);
+         * @since 2.2.28
+         * @param [scheduler] A scheduler to use for scheduling the arguments.
+         * @returns The observable sequence whose elements are pulled from the given arguments.
+         */
         ofWithScheduler<T>(scheduler?: IScheduler, ...values: T[]): Observable<T>;
         range(start: number, count: number, scheduler?: IScheduler): Observable<number>;
         repeat<T>(value: T, repeatCount?: number, scheduler?: IScheduler): Observable<T>;
@@ -582,26 +582,26 @@ declare namespace Rx {
         zipArray<T>(sources: (Observable<T> | IPromise<T>)[]): Observable<T[]>;
 
         /**
-        * Converts a Promise to an Observable sequence
-        * @param promise An ES6 Compliant promise.
-        * @returns An Observable sequence which wraps the existing promise success and failure.
-        */
+         * Converts a Promise to an Observable sequence
+         * @param promise An ES6 Compliant promise.
+         * @returns An Observable sequence which wraps the existing promise success and failure.
+         */
         fromPromise<T>(promise: IPromise<T>): Observable<T>;
 
         prototype: any;
     }
 
-    export var Observable: ObservableStatic;
+    const Observable: ObservableStatic;
 }
 
 // Async
 
 declare namespace Rx {
-    export namespace config {
+    namespace config {
         /**
-        * Configuration option to determine whether to use native events only
-        */
-        export var useNativeEvents: boolean;
+         * Configuration option to determine whether to use native events only
+         */
+        const useNativeEvents: boolean;
     }
 
     interface ObservableStatic {
@@ -655,12 +655,12 @@ declare namespace Rx {
     }
 
     interface NodeEventTarget {
-        addListener: (name: string, cb: (e: any) => any) => void;
+        addListener(name: string, cb: (e: any) => any): void;
     }
 
     interface NativeEventTarget {
-        on: (name: string, cb: (e: any) => any) => void;
-        off: (name: string, cb: (e: any) => any) => void;
+        on(name: string, cb: (e: any) => any): void;
+        off(name: string, cb: (e: any) => any): void;
     }
 
     interface DOMEventTarget {
@@ -669,29 +669,28 @@ declare namespace Rx {
     }
 }
 
-
 // time
 
 declare namespace Rx {
-    export interface TimeInterval<T> {
+    interface TimeInterval<T> {
         value: T;
         interval: number;
     }
 
-    export interface Timestamp<T> {
+    interface Timestamp<T> {
         value: T;
         timestamp: number;
     }
 
-    export interface Observable<T> {
+    interface Observable<T> {
         delay(dueTime: Date, scheduler?: IScheduler): Observable<T>;
         delay(dueTime: number, scheduler?: IScheduler): Observable<T>;
 
         debounce(dueTime: number, scheduler?: IScheduler): Observable<T>;
         throttleWithTimeout(dueTime: number, scheduler?: IScheduler): Observable<T>;
         /**
-        * @deprecated use #debounce or #throttleWithTimeout instead.
-        */
+         * @deprecated use #debounce or #throttleWithTimeout instead.
+         */
         throttle(dueTime: number, scheduler?: IScheduler): Observable<T>;
 
         timeInterval(scheduler?: IScheduler): Observable<TimeInterval<T>>;

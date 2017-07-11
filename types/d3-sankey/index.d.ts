@@ -1,9 +1,9 @@
-// Type definitions for D3JS d3-sankey module 0.5
+// Type definitions for D3JS d3-sankey module 0.7
 // Project: https://github.com/d3/d3-sankey/
 // Definitions by: Tom Wanzek <https://github.com/tomwanzek>, Alex Ford <https://github.com/gustavderdrache>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-// Last module patch version validated against: 0.5
+// Last module patch version validated against: 0.7
 
 import { Link } from 'd3-shape';
 
@@ -43,21 +43,33 @@ export interface SankeyNodeMinimal<N extends SankeyExtraProperties, L extends Sa
      */
     value?: number;
     /**
-     * Node's horizontal position (derived from the graph topology) calculated by Sankey layout generator.
+     * Node’s zero-based index within the array of nodes calculated by Sankey layout generator.
      */
-    x?: number;
+    index?: number;
     /**
-     * Node's node width calculated by Sankey layout generator.
+     * Node’s zero-based graph depth, derived from the graph topology calculated by Sankey layout generator.
      */
-    dx?: number;
+    depth?: number;
     /**
-     * Node's vertical position calculated by Sankey layout generator.
+     * Node’s zero-based graph height, derived from the graph topology calculated by Sankey layout generator.
      */
-    y?: number;
+    height?: number;
     /**
-     * Node's height (proportional to its value) calculated by Sankey layout generator.
+     * Node's minimum horizontal position (derived from the node.depth) calculated by Sankey layout generator.
      */
-    dy?: number;
+    x0?: number;
+    /**
+     * Node’s maximum horizontal position (node.x0 + sankey.nodeWidth) calculated by Sankey layout generator.
+     */
+    x1?: number;
+    /**
+     * Node's minimum vertical position calculated by Sankey layout generator.
+     */
+    y0?: number;
+    /**
+     * Node's maximum vertical position (node.y1 - node.y0 is proportional to node.value) calculated by Sankey layout generator.
+     */
+    y1?: number;
 }
 
 /**
@@ -88,39 +100,45 @@ export type SankeyNode<N extends SankeyExtraProperties, L extends SankeyExtraPro
  */
 export interface SankeyLinkMinimal<N extends SankeyExtraProperties, L extends SankeyExtraProperties> {
     /**
-     * Link's source node. For convenience, when initializing a Sankey layout,
+     * Link's source node. For convenience, when initializing a Sankey layout using the default node id accessor,
      * source may be the zero-based index of the corresponding node in the nodes array
-     * returned by the nodes accessor of the Sankey layout generator rather than object references.
+     * returned by the nodes accessor of the Sankey layout generator rather than object references. Alternatively,
+     * the Sankey layout can be configured with a custom node ID accessor to resolve the source node of the link upon initialization.
      *
      * Once the Sankey generator is invoked to return the Sankey graph object,
      * the numeric index will be replaced with the corresponding source node object.
      */
-    source: number | SankeyNode<N, L>;
+    source: number | string | SankeyNode<N, L>;
     /**
-     * Link's target node. For convenience, when initializing a Sankey layout,
+     * Link's target node. For convenience, when initializing a Sankey layout using the default node id accessor,
      * target may be the zero-based index of the corresponding node in the nodes array
-     * returned by the nodes accessor of the Sankey layout generator rather than object references.
+     * returned by the nodes accessor of the Sankey layout generator rather than object references. Alternatively,
+     * the Sankey layout can be configured with a custom node ID accessor to resolve the target node of the link upon initialization.
      *
      * Once the Sankey generator is invoked to return the Sankey graph object,
      * the numeric index will be replaced with the corresponding target node object.
      */
-    target: number | SankeyNode<N, L>;
+    target: number | string | SankeyNode<N, L>;
     /**
      * Link's numeric value
      */
     value: number;
     /**
-     * Link breadth (proportional to its value) calculated by Sankey layout generator.
-     */
-    dy?: number;
-    /**
      * Link's vertical starting position (at source node) calculated by Sankey layout generator.
      */
-    sy?: number;
+    y0?: number;
     /**
      * Link's vertical end position (at target node) calculated by Sankey layout generator.
      */
-    ty?: number;
+    y1?: number;
+    /**
+     * Link's width (proportional to its value) calculated by Sankey layout generator.
+     */
+    width?: number;
+    /**
+     * Link's zero-based index within the array of links calculated by Sankey layout generator.
+     */
+    index?: number;
 }
 
 /**
@@ -233,6 +251,34 @@ export interface SankeyLayout<Data, N extends SankeyExtraProperties, L extends S
     links(links: (data: Data, ...args: any[]) => Array<SankeyLink<N, L>>): this;
 
     /**
+     * Return the current node id accessor.
+     * The default accessor is a function being passed in a Sankey layout node and returning its numeric node.index.
+     */
+    nodeId(): (node: SankeyNode<N, L>) => string | number;
+    /**
+     * Set the node id accessor to the specified function and return this Sankey layout generator.
+     *
+     * The default accessor is a function being passed in a Sankey layout node and returning its numeric node.index.
+     * The default id accessor allows each link’s source and target to be specified as a zero-based index into the nodes array.
+     *
+     * @param nodeId A node id accessor function being passed a node in the Sankey graph and returning its id.
+     */
+    nodeId(nodeId: (node: SankeyNode<N, L>) => string | number): this;
+
+    /**
+     * Return the current node alignment method, which defaults to d3.sankeyLeft.
+     */
+    nodeAlign(): (node: SankeyNode<N, L>, n: number) => number;
+    /**
+     * Set the node alignment method the specified function and return this Sankey layout generator.
+     *
+     * @param nodeAlign A node alignment function which is evaluated for each input node in order,
+     * being passed the current node and the total depth n of the graph (one plus the maximum node.depth),
+     * and must return an integer between 0 and n - 1 that indicates the desired horizontal position of the node in the generated Sankey diagram.
+     */
+    nodeAlign(nodeAlign: (node: SankeyNode<N, L>, n: number) => number): this;
+
+    /**
      * Return the current node width, which defaults to 24.
      */
     nodeWidth(): number;
@@ -279,6 +325,17 @@ export interface SankeyLayout<Data, N extends SankeyExtraProperties, L extends S
      * @param size A two element array of [width, height] in pixels which defaults to [1, 1].
      */
     size(size: [number, number]): this;
+
+    /**
+     * Return the current number of relaxation iterations, which defaults to 32.
+     */
+    iterations(): number;
+    /**
+     * Set the number of relaxation iterations when generating the layout and return this Sankey layout generator.
+     *
+     * @param iterations Number of relaxation iterations, which defaluts to 32.
+     */
+    iterations(iterations: number): this;
 }
 
 /**
@@ -322,6 +379,44 @@ export function sankey<N extends SankeyExtraProperties, L extends SankeyExtraPro
  * SankeyLinkMinimal interface.
  */
 export function sankey<Data, N extends SankeyExtraProperties, L extends SankeyExtraProperties>(): SankeyLayout<Data, N, L>;
+
+/**
+ * Compute the horizontal node position of a node in a Sankey layout with left alignment.
+ * Returns (node.depth) to indicate the desired horizontal position of the node in the generated Sankey diagram.
+ *
+ * @param node Sankey node for which to calculate the horizontal node position.
+ * @param n Total depth n of the graph  (one plus the maximum node.depth)
+ */
+export function sankeyLeft(node: SankeyNode<{}, {}>, n: number): number;
+
+/**
+ * Compute the horizontal node position of a node in a Sankey layout with right alignment.
+ * Returns (n - 1 - node.height) to indicate the desired horizontal position of the node in the generated Sankey diagram.
+ *
+ * @param node Sankey node for which to calculate the horizontal node position.
+ * @param n Total depth n of the graph  (one plus the maximum node.depth)
+ */
+export function sankeyRight(node: SankeyNode<{}, {}>, n: number): number;
+
+/**
+ * Compute the horizontal node position of a node in a Sankey layout with center alignment.
+ * Like d3.sankeyLeft, except that nodes without any incoming links are moved as right as possible.
+ * Returns an integer between 0 and n - 1 that indicates the desired horizontal position of the node in the generated Sankey diagram.
+ *
+ * @param node Sankey node for which to calculate the horizontal node position.
+ * @param n Total depth n of the graph  (one plus the maximum node.depth)
+ */
+export function sankeyCenter(node: SankeyNode<{}, {}>, n: number): number;
+
+/**
+ * Compute the horizontal node position of a node in a Sankey layout with justified alignment.
+ * Like d3.sankeyLeft, except that nodes without any outgoing links are moved to the far right.
+ * Returns an integer between 0 and n - 1 that indicates the desired horizontal position of the node in the generated Sankey diagram.
+ *
+ * @param node Sankey node for which to calculate the horizontal node position.
+ * @param n Total depth n of the graph  (one plus the maximum node.depth)
+ */
+export function sankeyJustify(node: SankeyNode<{}, {}>, n: number): number;
 
 /**
  * Get a horizontal link shape suitable for a Sankey diagram.

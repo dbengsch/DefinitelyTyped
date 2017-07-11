@@ -168,6 +168,18 @@ namespace fs_tests {
                 encoding: "ascii"
             },
             assert.ifError);
+
+        fs.writeFile("testfile", "content", "utf8", assert.ifError);
+
+        fs.writeFileSync("testfile", "content", "utf8");
+        fs.writeFileSync("testfile", "content", { encoding: "utf8" });
+    }
+
+    {
+        fs.appendFile("testfile", "foobar", "utf8", assert.ifError);
+        fs.appendFile("testfile", "foobar", { encoding: "utf8" }, assert.ifError);
+        fs.appendFileSync("testfile", "foobar", "utf8");
+        fs.appendFileSync("testfile", "foobar", { encoding: "utf8" });
     }
 
     {
@@ -430,7 +442,23 @@ namespace util_tests {
     {
         // Old and new util.inspect APIs
         util.inspect(["This is nice"], false, 5);
-        util.inspect(["This is nice"], { colors: true, depth: 5, customInspect: false });
+        util.inspect(["This is nice"], false, null);
+        util.inspect(["This is nice"], {
+          colors: true,
+          depth: 5,
+          customInspect: false,
+          showProxy: true,
+          maxArrayLength: 10,
+          breakLength: 20
+        });
+        util.inspect(["This is nice"], {
+          colors: true,
+          depth: null,
+          customInspect: false,
+          showProxy: true,
+          maxArrayLength: null,
+          breakLength: Infinity
+        })
     }
 }
 

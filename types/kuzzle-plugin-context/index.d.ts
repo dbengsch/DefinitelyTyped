@@ -67,8 +67,8 @@ declare class KuzzleBaseValidationType {
 }
 
 export interface KuzzlePluginContext {
+    log: KuzzlePluginLogs,
     accessors: {
-        log: KuzzlePluginLogs
         passport: KuzzlePluginPassport
         validation: {
             addType(): void

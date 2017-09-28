@@ -3,10 +3,10 @@
 // Definitions by: Carl de Billy <http://carl.debilly.net/>, Igor Oleinikov <https://github.com/Igorbek>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-///<reference types="rx-lite" />
+/// <reference types="rx-lite" />
 
 declare namespace Rx {
-    export interface Observable<T> {
+    interface Observable<T> {
         finalValue(): Observable<T>;
         aggregate(accumulator: (acc: T, value: T) => T): Observable<T>;
         aggregate<TAcc>(seed: TAcc, accumulator: (acc: TAcc, value: T) => TAcc): Observable<TAcc>;

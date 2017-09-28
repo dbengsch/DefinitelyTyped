@@ -1,6 +1,8 @@
 // Type definitions for Highstock 2.1.5
 // Project: http://www.highcharts.com/
+
 // Definitions by: David Deutsch <http://github.com/DavidKDeutsch>
+// Definitions by: Dave Baumann <https://github.com/route2Dev>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 import * as Highcharts from "highcharts";
@@ -30,10 +32,10 @@ declare namespace Highstock {
     }
 
     interface RangeSelectorButton {
-    type: string; // Defines the timespan, can be one of 'millisecond', 'second', 'minute', 'day', 'week', 'month', 'ytd' (year to date), 'year' and 'all'.
-    count?: number;
-    text: string;
-    dataGrouping?: any; // not sure how this works
+        type: string; // Defines the timespan, can be one of 'millisecond', 'second', 'minute', 'day', 'week', 'month', 'ytd' (year to date), 'year' and 'all'.
+        count?: number;
+        text: string;
+        dataGrouping?: any; // not sure how this works
     }
 
     interface RangeSelectorOptions {
@@ -46,7 +48,7 @@ declare namespace Highstock {
         inputBoxHeight?: number;
         inputBoxWidth?: number;
         inputDateFormat?: string;
-        inputDateParser?: (date: string) => number;
+        inputDateParser?(date: string): number;
         inputEditDateFormat?: string;
         inputEnabled?: boolean;
         inputPosition?: {
@@ -61,30 +63,36 @@ declare namespace Highstock {
     }
 
     interface ScrollbarOptions {
-    barBackgroundColor?: string;
-    barBorderColor?: string;
-    barBorderRadius?: number;
-    barBorderWidth?: number;
-    buttonArrowColor?: string;
-    buttonBackgroundColor?: string;
-    buttonBorderColor?: string;
-    buttonBorderRadius?: number;
-    buttonBorderWidth?: number;
-    enabled?: boolean;
-    height?: number;
-    liveRedraw?: boolean;
-    minWidth?: number;
-    rifleColor?: string;
-    trackBackgroundColor?: string;
-    trackBorderColor?: string;
-    trackBorderRadius?: number;
-    trackBorderWidth?: number;
+        barBackgroundColor?: string;
+        barBorderColor?: string;
+        barBorderRadius?: number;
+        barBorderWidth?: number;
+        buttonArrowColor?: string;
+        buttonBackgroundColor?: string;
+        buttonBorderColor?: string;
+        buttonBorderRadius?: number;
+        buttonBorderWidth?: number;
+        enabled?: boolean;
+        height?: number;
+        liveRedraw?: boolean;
+        minWidth?: number;
+        rifleColor?: string;
+        trackBackgroundColor?: string;
+        trackBorderColor?: string;
+        trackBorderRadius?: number;
+        trackBorderWidth?: number;
+    }
+
+    interface AxisOptions extends Highcharts.AxisOptions {
+        scrollbar?: ScrollbarOptions;
     }
 
     interface Options extends Highcharts.Options {
         navigator?: NavigatorOptions;
         rangeSelector?: RangeSelectorOptions;
         scrollbar?: ScrollbarOptions;
+        xAxis?: AxisOptions[] | AxisOptions;
+        yAxis?: AxisOptions[] | AxisOptions;
     }
 
     interface Chart {
@@ -94,6 +102,7 @@ declare namespace Highstock {
 
     interface Static extends Highcharts.Static {
         StockChart: Chart;
+        stockChart(renderTo: string | HTMLElement, options: Options, callback?: (chart: ChartObject) => void): ChartObject;
     }
 }
 
@@ -105,7 +114,7 @@ declare global {
          * a div selected by $('#container')
          * @param {Highcharts.Options} options Options for this chart
          * @return current {JQuery} selector the current JQuery selector
-         **/
+         */
         highcharts(type: "StockChart", options: Highstock.Options): JQuery;
         /**
          * Creates a new Highcharts.Chart for the current JQuery selector; usually
@@ -113,7 +122,7 @@ declare global {
          * @param {Highcharts.Options} options Options for this chart
          * @param callback Callback function used to manipulate the constructed chart instance
          * @return current {JQuery} selector the current JQuery selector
-         **/
+         */
         highcharts(type: "StockChart", options: Highstock.Options, callback: (chart: Highstock.ChartObject) => void): JQuery;
 
         highcharts(type: string): Highcharts.ChartObject;
@@ -122,6 +131,6 @@ declare global {
     }
 }
 
-declare var Highstock: Highstock.Static;
+declare const Highstock: Highstock.Static;
 export = Highstock;
 export as namespace Highstock;

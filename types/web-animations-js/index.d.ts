@@ -1,11 +1,11 @@
 // Type definitions for web-animations-js 2.2
 // Project: https://github.com/web-animations/web-animations-js
-// Definitions by: Kristian Moerch <https://github.com/kritollm/>
+// Definitions by: Kristian Moerch <https://github.com/kritollm>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-declare type AnimationEffectTimingFillMode = "none" | "forwards" | "backwards" | "both" | "auto";
-declare type AnimationEffectTimingPlaybackDirection = "normal" | "reverse" | "alternate" | "alternate-reverse";
-declare type AnimationPlayState = "idle" | "pending" | "running" | "paused" | "finished";
+type AnimationEffectTimingFillMode = "none" | "forwards" | "backwards" | "both" | "auto";
+type AnimationEffectTimingPlaybackDirection = "normal" | "reverse" | "alternate" | "alternate-reverse";
+type AnimationPlayState = "idle" | "pending" | "running" | "paused" | "finished";
 
 declare class AnimationPlaybackEvent {
     constructor(target: Animation, currentTime: number, timelineTime: number);
@@ -24,7 +24,7 @@ declare class AnimationPlaybackEvent {
 interface AnimationKeyFrame {
     easing?: string;
     offset?: number;
-    [key: string]: string | string[] | number | number[] | undefined;
+    [key: string]: string | number | [string | number, string | number] | undefined;
 }
 
 interface AnimationTimeline {
@@ -46,15 +46,15 @@ interface AnimationEffectTiming {
 declare class KeyframeEffect {
     constructor(target: HTMLElement, effect: AnimationKeyFrame | AnimationKeyFrame[], timing: number | AnimationEffectTiming, id?: string);
     activeDuration: number;
-    onsample: any;
-    parent: any;
-    target: any;
+    onsample: (timeFraction: number | null, effect: KeyframeEffect, animation: Animation) => void | undefined;
+    parent: KeyframeEffect | null;
+    target: HTMLElement;
     timing: AnimationEffectTiming;
     getFrames(): AnimationKeyFrame[];
+    remove(): void;
 }
-interface AnimationEventListener {
-    (evt: AnimationPlaybackEvent): void;
-}
+type AnimationEventListener = (evt: AnimationPlaybackEvent) => void;
+
 declare class Animation {
     constructor(effect: KeyframeEffect, timeline?: AnimationTimeline);
     currentTime: number;
@@ -69,8 +69,8 @@ declare class Animation {
     pause(): void;
     play(): void;
     reverse(): void;
-    addEventListener(type: "finish", handler: AnimationEventListener): void;
-    removeEventListener(type: "finish", handler: AnimationEventListener): void;
+    addEventListener(type: "finish" | "cancel", handler: AnimationEventListener): void;
+    removeEventListener(type: "finish" | "cancel", handler: AnimationEventListener): void;
     effect: KeyframeEffect;
     readonly finished: Promise<Animation>;
     readonly ready: Promise<Animation>;

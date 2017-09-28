@@ -3,10 +3,10 @@
 // Definitions by: gsino <http://www.codeplex.com/site/users/view/gsino>, Igor Oleinikov <https://github.com/Igorbek>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-///<reference types="rx-lite" />
+/// <reference types="rx-lite" />
 
 declare namespace Rx {
-    export interface VirtualTimeScheduler<TAbsolute, TRelative> extends Scheduler {
+    interface VirtualTimeScheduler<TAbsolute, TRelative> extends Scheduler {
         // protected constructor(initialClock: TAbsolute, comparer: (first: TAbsolute, second: TAbsolute) => number);
 
         advanceBy(time: TRelative): void;
@@ -28,10 +28,10 @@ declare namespace Rx {
         /* protected */ getNext(): internals.ScheduledItem<TAbsolute>;
     }
 
-    export interface HistoricalScheduler extends VirtualTimeScheduler<number, number> {
+    interface HistoricalScheduler extends VirtualTimeScheduler<number, number> {
     }
 
-    export var HistoricalScheduler: {
+    const HistoricalScheduler: {
         new (initialClock: number, comparer: (first: number, second: number) => number): HistoricalScheduler;
     };
 }

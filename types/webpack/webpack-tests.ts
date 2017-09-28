@@ -77,6 +77,26 @@ configuration = {
 };
 
 //
+// https://webpack.js.org/configuration/entry-context/#dynamic-entry
+//
+
+configuration = {
+    entry: () => './demo'
+};
+
+configuration = {
+    entry: () => ['./demo', './demo2']
+};
+
+configuration = {
+    entry: () => new Promise((resolve) => resolve('./demo'))
+};
+
+configuration = {
+    entry: () => new Promise((resolve) => resolve(['./demo', './demo2']))
+};
+
+//
 // https://webpack.github.io/docs/code-splitting.html
 //
 
@@ -99,7 +119,7 @@ configuration = {
 configuration =  {
     entry: { a: "./a", b: "./b" },
     output: { filename: "[name].js" },
-    plugins: [ new webpack.optimize.CommonsChunkPlugin("init.js") ]
+    plugins: [ new webpack.optimize.CommonsChunkPlugin({ name: "init.js" }) ]
 };
 
 //
@@ -141,7 +161,7 @@ configuration = {
         filename: "[name].entry.chunk.js"
     },
     plugins: [
-        new CommonsChunkPlugin("commons.chunk.js")
+        new CommonsChunkPlugin({ name: "commons.chunk.js" })
     ]
 };
 
@@ -230,8 +250,8 @@ rule = {
     loader: "babel-loader"
 };
 
-declare var require: any;
-declare var path: any;
+declare const require: any;
+declare const path: any;
 configuration = {
     plugins: [
         function(this: webpack.Compiler) {
@@ -383,9 +403,9 @@ plugin = new CommonsChunkPlugin({
 });
 plugin = new webpack.DefinePlugin(definitions);
 plugin = new webpack.DefinePlugin({
-    "VERSION": JSON.stringify("5fa3b9"),
-    "BROWSER_SUPPORTS_HTML5": true,
-    "TWO": "1+1",
+    VERSION: JSON.stringify("5fa3b9"),
+    BROWSER_SUPPORTS_HTML5: true,
+    TWO: "1+1",
     "typeof window": JSON.stringify("object")
 });
 plugin = new webpack.ProvidePlugin(definitions);
@@ -421,7 +441,15 @@ plugin = new webpack.WatchIgnorePlugin(paths);
 plugin = new webpack.LoaderOptionsPlugin({
     debug: true
 });
+plugin = new webpack.EnvironmentPlugin(['a', 'b']);
+plugin = new webpack.EnvironmentPlugin({a: true, b: 'c'});
 plugin = new webpack.ProgressPlugin((percent: number, message: string) => {});
+plugin = new webpack.HashedModuleIdsPlugin();
+plugin = new webpack.HashedModuleIdsPlugin({
+    hashFunction: 'sha256',
+    hashDigest: 'hex',
+    hashDigestLength: 20
+});
 
 //
 // http://webpack.github.io/docs/node.js-api.html
@@ -435,7 +463,7 @@ webpack({
 });
 
 // returns a Compiler instance
-var compiler = webpack({
+let compiler = webpack({
     // configuration
 });
 
@@ -473,8 +501,8 @@ webpack({
 }, (err, stats) => {
     if (err)
         return handleFatalError(err);
-    var jsonStats = stats.toJson();
-    var jsonStatsWithAllOptions = stats.toJson({
+    const jsonStats = stats.toJson();
+    const jsonStatsWithAllOptions = stats.toJson({
         assets: true,
         assetsSort: "field",
         cached: true,
@@ -503,13 +531,13 @@ webpack({
     successfullyCompiled();
 });
 
-declare var fs: any;
+declare const fs: any;
 
 compiler = webpack({ });
 compiler.outputFileSystem = fs;
 compiler.run((err, stats) => {
     // ...
-    var fileContent = fs.readFileSync("...");
+    const fileContent = fs.readFileSync("...");
 });
 
 //
@@ -575,9 +603,13 @@ configuration = {
     }
 };
 
-const resolve: webpack.Resolve = {
-    cachePredicate: 'boo' // why does this test _not_ fail!?
-};
+class TestResolvePlugin implements webpack.ResolvePlugin {
+    apply(resolver: any) {
+        resolver.plugin('before-existing-directory', (request: any, callback: any) => {
+            callback();
+        });
+    }
+}
 
 const performance: webpack.Options.Performance = {
     hints: 'error',
@@ -599,14 +631,16 @@ function loader(this: webpack.loader.LoaderContext, source: string, sourcemap: s
 
     this.resolve('context', 'request', ( err: Error, result: string) => {});
 
-    this.emitError('wraning');
+    this.emitWarning('warning message');
+    this.emitWarning(new Error('warning message'));
+
+    this.emitError('error message');
+    this.emitError(new Error('error message'));
 
     this.callback(null, source);
 }
 
-namespace loader {
-    export const raw: boolean = true;
-    export const pitch = (remainingRequest: string, precedingRequest: string, data: any) => {};
-}
+(loader as webpack.loader.Loader).raw = true;
+(loader as webpack.loader.Loader).pitch = (remainingRequest: string, precedingRequest: string, data: any) => {};
 const loaderRef: webpack.loader.Loader = loader;
 console.log(loaderRef.raw === true);

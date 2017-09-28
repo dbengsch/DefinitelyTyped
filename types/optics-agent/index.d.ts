@@ -21,7 +21,7 @@ export interface Options {
    *
    * You shouldn't need to set this unless you are debugging.
    */
-  normalizeQuery?: (graphQLResolveInfo: any) => string;
+  normalizeQuery?(graphQLResolveInfo: any): string;
 
   /**
    * Where to send the reports. Defaults to the production Optics endpoint, or the OPTICS_ENDPOINT_URL environment variable if it is set.
@@ -83,12 +83,14 @@ export function middleware(): (req: Request, res: Response, next?: any) => void;
 export function instrumentHapiServer(server: Server): void;
 export function context(req: Request): any;
 
-export default {
-  configureAgent,
-  instrumentSchema,
-  koaMiddleware,
-  middleware,
-  instrumentHapiServer,
-  context,
-  Agent,
+declare const defaultExport: {
+  configureAgent: typeof configureAgent,
+  instrumentSchema: typeof instrumentSchema,
+  koaMiddleware: typeof koaMiddleware,
+  middleware: typeof middleware,
+  instrumentHapiServer: typeof instrumentHapiServer,
+  context: typeof context,
+  Agent: typeof Agent,
 };
+
+export default defaultExport;

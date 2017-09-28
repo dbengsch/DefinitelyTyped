@@ -1,4 +1,4 @@
-import VKBeautify from 'vkbeautify';
+import VKBeautify = require('vkbeautify');
 
 /*
  * Beautifying
@@ -67,7 +67,6 @@ function sqlWithNumberOfSpaces() {
 function sqlWithStringPattern() {
     VKBeautify.sql(exampleContent, '   ');
 }
-
 
 /*
  * Minifying

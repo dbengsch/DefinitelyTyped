@@ -1,7 +1,10 @@
-{ 
-  "extends": "../tslint.json",
+{
+  "extends": "dtslint/dt.json",
   "rules": {
-    "forbidden-types": false,
+    // TODOs
+    "ban-types": false,
+    "dt-header": false,
+    "no-any-union": false,
     "no-single-declare-module": false
   }
 }

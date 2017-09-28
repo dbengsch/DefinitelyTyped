@@ -1,7 +1,9 @@
-// Type definitions for Date Range Picker v2.1.19
+// Type definitions for Date Range Picker v2.1.25
 // Project: http://www.daterangepicker.com/
-// Definitions by: SirMartin <https://github.com/SirMartin/>
+// Definitions by: SirMartin <https://github.com/SirMartin>
+//                 Steven Masala <https://github.com/smasala>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
 
 /// <reference types="jquery"/>
 import moment = require("moment");
@@ -9,11 +11,25 @@ import moment = require("moment");
 declare global {
     interface JQuery {
         daterangepicker(settings?: daterangepicker.Settings): JQuery;
-        daterangepicker(settings?: daterangepicker.Settings, callback?: (start?: string | Date | moment.Moment, end?: string | Date | moment.Moment, label?: string) => any): JQuery;
+        daterangepicker(settings?: daterangepicker.Settings, callback?: daterangepicker.DataRangePickerCallback): JQuery;
     }
 }
 
+declare const daterangepicker: daterangepicker.DateRangePicker;
+
 declare namespace daterangepicker {
+    type DataRangePickerCallback = (start?: string | Date | moment.Moment, end?: string | Date | moment.Moment, label?: string) => any;
+
+    interface DateRangePicker {
+        new (element: HTMLElement, settings?: daterangepicker.Settings, callback?: DataRangePickerCallback): DateRangePicker;
+
+        startDate: moment.Moment;
+        endDate: moment.Moment;
+        
+        setStartDate(date: Date | moment.Moment | string): void;
+        setEndDate(date: Date | moment.Moment | string): void;
+        remove(): void;
+    }
 
     interface DatepickerEventObject extends JQueryEventObject {
         date: Date;

@@ -1,8 +1,8 @@
 // Type definitions for react-bootstrap-date-picker 4.0
 // Project: https://github.com/pushtell/react-bootstrap-date-picker#readme
-// Definitions by: Karol Janyst <https://github.com/LKay>
+// Definitions by: Karol Janyst <https://github.com/LKay>, Antal Bodnar <https://github.com/ssi-hu-antal-bodnar>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
 import { ComponentClass, StatelessComponent, ReactNode, FocusEventHandler, HTMLAttributes } from "react";
 
@@ -14,12 +14,13 @@ declare const DatePicker: DatePicker;
 type DatePicker = ComponentClass<DatePicker.DatePickerProps>;
 
 declare namespace DatePicker {
+    type ChangeCallback = (value: string, formattedValue: string) => void;
 
-    export type ChangeCallback = (value: string, formattedValue: string) => void;
-
-    export interface DatePickerProps {
+    interface DatePickerProps {
         value?: string;
         defaultValue?: string;
+        minDate?: string;
+        maxDate?: string;
         style?: any;
         className?: string;
         autoFocus?: boolean;
@@ -30,7 +31,7 @@ declare namespace DatePicker {
         dateFormat?: string;
         clearButtonElement?: ReactNode;
         showClearButton?: boolean;
-        onClear?: () => void;
+        onClear?(): void;
         previousButtonElement?: ReactNode;
         nextButtonElement?: ReactNode;
         cellPadding?: string;
@@ -43,5 +44,4 @@ declare namespace DatePicker {
         todayButtonLabel?: string;
         customControl?: StatelessComponent<any> | ComponentClass<any>;
     }
-
 }

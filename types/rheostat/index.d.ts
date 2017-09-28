@@ -2,7 +2,7 @@
 // Project: https://github.com/airbnb/rheostat
 // Definitions by: Sasha Bayan <https://github.com/SashaBayan>, Wil Lee <https://github.com/kourge>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
 import * as React from 'react';
 
@@ -20,13 +20,13 @@ export interface PublicState {
 }
 
 export interface Events {
-  onClick?: () => any;
-  onChange?: (publicState: PublicState) => any;
-  onKeyPress?: () => any;
-  onSliderDragEnd?: () => any;
-  onSliderDragMove?: () => any;
-  onSliderDragStart?: () => any;
-  onValuesUpdated?: (publicState: PublicState) => any;
+  onClick?(): any;
+  onChange?(publicState: PublicState): any;
+  onKeyPress?(): any;
+  onSliderDragEnd?(): any;
+  onSliderDragMove?(): any;
+  onSliderDragStart?(): any;
+  onValuesUpdated?(publicState: PublicState): any;
 }
 
 export interface Props extends Events {
@@ -46,4 +46,3 @@ export interface Props extends Events {
 }
 
 export default class Rheostat extends React.Component<Props, never> {}
-

@@ -1,6 +1,6 @@
 // Type definitions for body-parser 1.16
 // Project: https://github.com/expressjs/body-parser
-// Definitions by: Santi Albo <https://github.com/santialbo>, Vilic Vane <https://github.com/vilic>, Jonathan Häberle <https://github.com/dreampulse>, Gevik Babakhani <https://github.com/blendsdk/>, Tomasz Łaziuk <https://github.com/tlaziuk>
+// Definitions by: Santi Albo <https://github.com/santialbo>, Vilic Vane <https://github.com/vilic>, Jonathan Häberle <https://github.com/dreampulse>, Gevik Babakhani <https://github.com/blendsdk>, Tomasz Łaziuk <https://github.com/tlaziuk>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 /// <reference types="node" />
@@ -17,11 +17,11 @@ declare namespace bodyParser {
         inflate?: boolean;
         limit?: number | string;
         type?: string | string[] | ((req: Request) => any);
-        verify?: (req: Request, res: Response, buf: Buffer, encoding: string) => void;
+        verify?(req: Request, res: Response, buf: Buffer, encoding: string): void;
     }
 
     interface OptionsJson extends Options {
-        reviever?: (key: string, value: any) => any;
+        reviver?(key: string, value: any): any;
         strict?: boolean;
     }
 

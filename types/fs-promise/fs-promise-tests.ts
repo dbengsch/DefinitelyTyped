@@ -1,19 +1,19 @@
 import * as fs from "fs-promise";
 
-var src: string;
-var dst: string;
-var dir: string;
-var path: string;
-var data: any;
-var writeOptions: fs.WriteOptions;
-var writeJsonOptions: fs.WriteJsonOptions = {
+let src: string;
+declare const dst: string;
+declare const dir: string;
+declare const path: string;
+declare const data: any;
+declare const writeOptions: fs.WriteOptions;
+const writeJsonOptions: fs.WriteJsonOptions = {
     spaces: 2,
     replacer(key, value) {
         src = key;
         return value;
     }
 };
-var readJsonOptions: fs.ReadJsonOptions;
+declare const readJsonOptions: fs.ReadJsonOptions;
 
 async function test() {
     await fs.copy(src, dst);

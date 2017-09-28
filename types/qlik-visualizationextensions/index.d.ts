@@ -1,7 +1,8 @@
-// Type definitions for qlik-visualizationextensions 3.2
-// Project: http://help.qlik.com/en-US/sense-developer/3.2/Subsystems/Extensions/Content/extensions-introduction.htm
+// Type definitions for qlik-visualizationextensions 4.0
+// Project: http://help.qlik.com/en-US/sense-developer/June2017/Subsystems/Extensions/Content/extensions-introduction.htm
 // Definitions by: Konrad Mattheis <https://github.com/konne>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
 
 /// <reference types="angular" />
 
@@ -654,12 +655,12 @@ declare namespace BackendAPI {
 
     interface INxPatch {
         /**
-       * Operation to perform.
-       * One of:
-       *       # Add
-       *       # Remove
-       *       # Replace
-       */
+         * Operation to perform.
+         * One of:
+         *       # Add
+         *       # Remove
+         *       # Replace
+         */
         qOp: PatchType;
 
         /**
@@ -939,6 +940,38 @@ declare namespace RootAPI {
         identity: string;
     }
 
+    interface ISessionAppConfig {
+        /**
+         * Optional Qlik host.
+         */
+        host?: string;
+
+        /**
+         * Port number.
+         */
+        port: string | number;
+
+        /**
+         * Optional. Qlik virtual proxy. "/" if no proxy.
+         */
+        prefix: string;
+
+        /**
+         * Optional. Use SSL.
+         */
+        isSecure: boolean;
+
+        /**
+         * Optional. Open app without loading data.
+         */
+        openWithoutData: boolean;
+
+        /**
+         * Optional. Unique identity for the session. If omitted, the session will be shared.
+         */
+        identity: string;
+    }
+
     interface IRoot {
         /**
          * Calls the Qlik Sense repository.
@@ -1025,6 +1058,21 @@ declare namespace RootAPI {
          * @param {string} [ID] - Object id. Optional: if no ID resize event will be sent to all objects.
          */
         resize(ID?: string): void;
+
+        /**
+         * Creates a session app JavaScript object with app methods.
+         * @param {any} [config] - Additional configuration parameters
+         * @return {any} - App JavaScript object with app methods.
+         */
+        sessionApp(config?: ISessionAppConfig): AppAPI.IApp;
+
+        /**
+         * Creates a session app JavaScript object with app methods from an existing app. You can create one session app per app.
+         * @param {string} [appId] - App id of the app to base the session app upon.
+         * @param {any} [config] - Additional configuration parameters.
+         * @return {any} - App JavaScript object with app methods.
+         */
+        sessionAppFromApp(appId: string, config?: ISessionAppConfig): AppAPI.IApp;
 
         /**
          * Sets a specific language for the Qlik Sense session.
@@ -1182,7 +1230,7 @@ declare namespace AppAPI {
         field(field?: string, state?: string): FieldAPI.IQField;
 
         /**
-          * Step forward in list of selections.
+         * Step forward in list of selections.
          * @return {Promise} - A promise of a Qlik engine reply.
          */
         forward(): ng.IPromise<any>;
@@ -1257,6 +1305,12 @@ declare namespace AppAPI {
          * @return {Promise} - A promise of an object model.
          */
         getObjectProperties(id: string): ng.IPromise<any>;
+
+        /**
+         * Gets the data load script of this app.
+         * @return {Promise} - A promise of an qScript object.
+         */
+        getScript(): ng.IPromise<string>;
 
         /**
          * Inserts a Qlik Sense snapshot into a HTML element. The snapshot fills
@@ -1369,10 +1423,17 @@ declare namespace AppAPI {
         selectAssociations(qMatchIx: number, qTerms: any[], qOptions?: any, qSoftLock?: any): ng.IPromise<any>;
 
         /**
-         * Creates a QSelectionState object that encapsulates the selection state. Entry point to the Selection API.
+         * Sets the data load script of this app. Also validates the script syntax and returns the syntax errors if errors exist.
          * @param {string} [state] - Optional. Sets the state. Default is $.
          */
         selectionState(state?: string): SelectionStateAPI.IQSelectionState;
+
+        /**
+         * Creates a QSelectionState object that encapsulates the selection state. Entry point to the Selection API.
+         * @param {string} [script] - The script content.
+         * @return {Promise} - A promise of an empty object or a list of syntax errors depending on the validation result.
+         */
+        setScript(script: string): ng.IPromise<any>;
 
         /**
          * Unlocks all selections that has previously been locked.
@@ -2178,7 +2239,7 @@ declare namespace VisualizationAPI {
          *       # treemap
          *       # extension
          * @param {array} [cols] - Optional. Column definitions, dimensions and measures.
-                  Each entry can be of the following structures:
+         *       Each entry can be of the following structures:
          *       # String
          *       # NxDimension
          *       # NxMeasure
@@ -2265,7 +2326,7 @@ declare namespace ExtensionAPI {
 
     interface IExtension {
         definition?: IDefinition;
-        paint?: ($element: HTMLElement, layout?: any) => void;
+        paint?($element: HTMLElement, layout?: any): void;
         initialProperties?: IInitialProperties;
         template?: string;
         controller?: any;
@@ -2468,6 +2529,8 @@ declare module "qlik" {
 }
 
 interface IQVAngular {
+    $injector: angular.auto.IInjectorService;
+
     /**
      * Register a new directive with the compiler.
      *
@@ -2481,14 +2544,14 @@ interface IQVAngular {
     filter(object: { [name: string]: ng.Injectable<Function> }): void;
 
     /**
-      * Register a service constructor, which will be invoked with new to create
-      * the service instance. This is short for registering a service where its
-      * provider's $get property is a factory function that returns an instance
-      * instantiated by the injector from the service constructor function.
-      * @param name The name of the instance.
-      * @param serviceConstructor An injectable class (constructor function) that will be instantiated.
-      * @return Returns the constructed singleton of the service class/function.
-      */
+     * Register a service constructor, which will be invoked with new to create
+     * the service instance. This is short for registering a service where its
+     * provider's $get property is a factory function that returns an instance
+     * instantiated by the injector from the service constructor function.
+     * @param name The name of the instance.
+     * @param serviceConstructor An injectable class (constructor function) that will be instantiated.
+     * @return Returns the constructed singleton of the service class/function.
+     */
     service<T>(name: string, serviceConstructor: ng.Injectable<Function>): T;
     service<T>(object: { [name: string]: ng.Injectable<Function> }): T;
 

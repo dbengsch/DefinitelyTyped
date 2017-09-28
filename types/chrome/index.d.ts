@@ -2,6 +2,7 @@
 // Project: http://developer.chrome.com/extensions/
 // Definitions by: Matthew Kimber <https://github.com/matthewkimber>, otiai10 <https://github.com/otiai10>, couven92 <https://github.com/couven92>, RReverser <https://github.com/rreverser>, sreimer15 <https://github.com/sreimer15>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
 
 /// <reference types="filesystem" />
 
@@ -435,7 +436,7 @@ declare namespace chrome.bookmarks {
 declare namespace chrome.browserAction {
     interface BadgeBackgroundColorDetails {
         /** An array of four integers in the range [0,255] that make up the RGBA color of the badge. For example, opaque red is [255, 0, 0, 255]. Can also be a string with a CSS value, with opaque red being #FF0000 or #F00. */
-        color: any;
+        color: string | ColorArray;
         /** Optional. Limits the change to when a particular tab is selected. Automatically resets when the tab is closed.  */
         tabId?: number;
     }
@@ -446,6 +447,8 @@ declare namespace chrome.browserAction {
         /** Optional. Limits the change to when a particular tab is selected. Automatically resets when the tab is closed.  */
         tabId?: number;
     }
+
+    type ColorArray = [number, number, number, number];
 
     interface TitleDetails {
         /** The string the browser action should display when moused over. */
@@ -517,7 +520,7 @@ declare namespace chrome.browserAction {
      * @param callback The callback parameter should be a function that looks like this:
      * function( ColorArray result) {...};
      */
-    export function getBadgeBackgroundColor(details: TabDetails, callback: (result: number[]) => void): void;
+    export function getBadgeBackgroundColor(details: TabDetails, callback: (result: ColorArray) => void): void;
     /**
      * Since Chrome 19.
      * Gets the html document set as the popup for this browser action.
@@ -4269,6 +4272,12 @@ declare namespace chrome.notifications {
         appIconMaskUrl?: string;
         /** Optional. A URL to the image thumbnail for image-type notifications. URLs have the same restrictions as iconUrl. */
         imageUrl?: string;
+        /**
+         * Indicates that the notification should remain visible on screen until the user activates or dismisses the notification.
+         * This defaults to false.
+         * @since Chrome 50
+         */
+        requireInteraction?: boolean;
     }
 
     interface NotificationClosedEvent extends chrome.events.Event<(notificationId: string, byUser: boolean) => void> {}
@@ -7100,12 +7109,13 @@ declare namespace chrome.webNavigation {
         transitionQualifiers: string[];
     }
 
-    interface WebNavigationRequestFilter extends chrome.webRequest.RequestFilter {
-        /** fulfills the webRequest.RequestFilter interface even though it is under web navigation **/
+    interface WebNavigationEventFilter {
+        /** Conditions that the URL being navigated to must satisfy. The 'schemes' and 'ports' fields of UrlFilter are ignored for this event. */
+        url: chrome.events.UrlFilter[];
     }
 
     interface WebNavigationEvent<T extends WebNavigationCallbackDetails> extends chrome.events.Event<(details: T) => void> {
-        addListener(callback: (details: T) => void, filters?: WebNavigationRequestFilter): void;
+        addListener(callback: (details: T) => void, filters?: WebNavigationEventFilter): void;
     }
 
     interface WebNavigationFramedEvent extends WebNavigationEvent<WebNavigationFramedCallbackDetails> {}
@@ -7215,7 +7225,7 @@ declare namespace chrome.webRequest {
          */
         types?: string[];
         /** A list of URLs or URL patterns. Requests that cannot match any of the URLs will be filtered out. */
-        urls: string[] | RegExp[] | "<all_urls>";
+        urls: string[];
  
         /** Optional. */
         windowId?: number;
@@ -7358,7 +7368,7 @@ declare namespace chrome.webRequest {
     interface WebRedirectionResponseEvent extends _WebResponseHeadersEvent<WebRedirectionResponseDetails> {}
 
     interface WebAuthenticationChallengeEvent extends chrome.events.Event<(details: WebAuthenticationChallengeDetails, callback?: (response: BlockingResponse) => void) => void> {
-        addListener(callback: (details: WebAuthenticationChallengeDetails) => void, filter?: RequestFilter, opt_extraInfoSpec?: string[]): void;
+        addListener(callback: (details: WebAuthenticationChallengeDetails, callback?: (response: BlockingResponse) => void) => void, filter?: RequestFilter, opt_extraInfoSpec?: string[]): void;
     }
 
     interface WebResponseErrorEvent extends _WebResponseHeadersEvent<WebResponseErrorDetails> {}

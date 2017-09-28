@@ -28,12 +28,10 @@ function test_AnimationsApiNext() {
     function buildFadeOut(target: HTMLElement) {
         const angle = Math.pow((Math.random() * 16) - 6, 3);
         const offset = (Math.random() * 20) - 10;
-        const transform = 'translate(' + offset + 'em, 20em) ' +
-            'rotate(' + angle + 'deg) ' +
-            'scale(0)';
+        const transform = `translate(${offset}em, 20em) rotate(${angle}deg) scale(0)`;
         const steps = [
             { visibility: 'visible', opacity: 1, transform: 'none' },
-            { visibility: 'visible', opacity: 0, transform: transform }
+            { visibility: 'visible', opacity: 0, transform }
         ];
         return new KeyframeEffect(target, steps, {
             duration: 1500,
@@ -43,13 +41,13 @@ function test_AnimationsApiNext() {
     const effectNode = document.createElement('div');
     effectNode.className = 'circleEffect';
     const bounds = document.documentElement.getBoundingClientRect();
-    effectNode.style.left = bounds.left + bounds.width / 2 + 'px';
-    effectNode.style.top = bounds.top + bounds.height / 2 + 'px';
+    effectNode.style.left = `${bounds.left + bounds.width / 2}px`;
+    effectNode.style.top = `${bounds.top + bounds.height / 2}px`;
     const header = document.querySelector('header');
     if (header) {
         header.appendChild(effectNode);
     }
-    const newColor = 'hsl(' + Math.round(Math.random() * 255) + ', 46%, 42%)';
+    const newColor = `hsl(${Math.round(Math.random() * 255)}, 46%, 42%)`;
     effectNode.style.background = newColor;
     const scaleSteps = [{ transform: 'scale(0)' }, { transform: 'scale(1)' }];
     const timing: AnimationEffectTiming = { duration: 2500, easing: 'ease-in-out', fill: "backwards" };
@@ -64,9 +62,9 @@ function test_AnimationsApiNext() {
 // https://developer.mozilla.org/en-US/docs/Web/API/Animation/Animation
 // http://codepen.io/rachelnabors/pen/eJyWzm/?editors=0010
 function test_whiteRabbit() {
-    var whiteRabbit = document.getElementById("rabbit");
+    const whiteRabbit = document.getElementById("rabbit");
     if (whiteRabbit) {
-        var rabbitDownKeyframes = new KeyframeEffect(
+        const rabbitDownKeyframes = new KeyframeEffect(
             whiteRabbit,
             [
                 { transform: 'translateY(0%)' },
@@ -74,23 +72,47 @@ function test_whiteRabbit() {
             ],
             { duration: 3000, fill: 'forwards' }
         );
-        var rabbitDownAnimation = new Animation(rabbitDownKeyframes, document.timeline);
+        const rabbitDownAnimation = new Animation(rabbitDownKeyframes, document.timeline);
         // On tap or click,
         whiteRabbit.addEventListener("mousedown", downHeGoes, false);
         whiteRabbit.addEventListener("touchstart", downHeGoes, false);
 
         // Trigger a single-fire animation
         function downHeGoes(event: Event) {
-
             // Remove those event listeners
             whiteRabbit!.removeEventListener("mousedown", downHeGoes, false);
             whiteRabbit!.removeEventListener("touchstart", downHeGoes, false);
 
             // Play rabbit animation
             rabbitDownAnimation.play();
-
         }
     }
-
-
+}
+// Testing onsample
+// https://github.com/web-animations/web-animations-js/releases
+function test_onsample_And_addEventListener() {
+    const elem = document.createElement("div");
+    if (elem) {
+        elem.style.width = '150px';
+        elem.style.color = 'black';
+        elem.textContent = "HELLO";
+        document.body.appendChild(elem);
+        const myEffect = new KeyframeEffect(elem, [], 1000);
+        myEffect.onsample = (timeFraction, effect, animation) => {
+            console.log("fraction", timeFraction);
+            // After finish event, timeFraction is null
+            if (timeFraction) {
+                effect.target.style.opacity = timeFraction.toFixed(2);
+            }
+        };
+        // onsample is write only
+        console.log(myEffect.onsample); // => undefined
+        const myAnimation = document.timeline.play(myEffect);
+        myAnimation.addEventListener("finish", (e) => {
+            console.log("finished", e);
+        });
+        myAnimation.addEventListener("cancel", (e) => {
+            console.log("canceled", e);
+        });
+    }
 }

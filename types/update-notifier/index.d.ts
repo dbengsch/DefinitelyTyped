@@ -9,17 +9,17 @@ declare function UpdateNotifier(settings?: UpdateNotifier.Settings): UpdateNotif
 
 declare namespace UpdateNotifier {
     class UpdateNotifier {
-        constructor(settings?: UpdateNotifier.Settings);
+        constructor(settings?: Settings);
 
-        update: UpdateNotifier.UpdateInfo;
+        update: UpdateInfo;
         check(): void;
         checkNpm(): void;
-        notify(customMessage?: UpdateNotifier.NotifyOptions): void;
+        notify(customMessage?: NotifyOptions): void;
     }
 
     interface Settings {
         pkg?: Package;
-        callback?: (update?: UpdateInfo) => any;
+        callback?(update?: UpdateInfo): any;
         packageName?: string;
         packageVersion?: string;
         updateCheckInterval?: number; // in milliseconds, default 1000 * 60 * 60 * 24 (1 day)

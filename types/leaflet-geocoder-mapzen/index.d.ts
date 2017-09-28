@@ -1,23 +1,24 @@
-// Type definitions for leaflet-geocoder-mapzen v1.6.3
+// Type definitions for leaflet-geocoder-mapzen 1.6
 // Project: https://github.com/mapzen/leaflet-geocoder
-// Definitions by: Leonard Lausen <http://leonard.lausen.nl/>
+// Definitions by: Leonard Lausen <https://github.com/leezu>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.2
 
-/// <reference types="leaflet" />
+import * as L from 'leaflet';
 
-declare namespace L {
+declare module 'leaflet' {
     namespace Control {
-        export interface GeocoderStatic extends ClassStatic {
+        interface GeocoderStatic extends ClassStatic {
             /**
              * Creates a geocoder control.
              */
             new (options?: GeocoderOptions): Geocoder;
         }
 
-        export interface Geocoder extends L.Control {
-        }
+        // tslint:disable-next-line:no-empty-interface
+        interface Geocoder extends Control {}
 
-        export interface GeocoderOptions {
+        interface GeocoderOptions {
             /**
              * Host endpoint for a Pelias-compatible search API.
              *
@@ -69,7 +70,7 @@ declare namespace L {
              *
              * Default value: null.
              */
-            params?: Object;
+            params?: object;
 
             /**
              * The position of the control (one of the map corners).
@@ -77,7 +78,7 @@ declare namespace L {
              *
              * Default value: 'topleft'.
              */
-            position?: L.PositionString;
+            position?: PositionString;
 
             /**
              * Attribution text to include.
@@ -166,11 +167,10 @@ declare namespace L {
         }
     }
 
-    export namespace control {
-
+    namespace control {
         /**
          * Creates a geocoder control.
          */
-        export function geocoder(api_key: string, options?: Control.GeocoderOptions): L.Control.Geocoder;
+        function geocoder(api_key: string, options?: Control.GeocoderOptions): Control.Geocoder;
     }
 }

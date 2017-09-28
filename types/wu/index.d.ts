@@ -1,13 +1,13 @@
 // Type definitions for wu.js 2.1
 // Project: https://fitzgen.github.io/wu.js/
-// Definitions by: phiresky <https://github.com/phiresky/>
+// Definitions by: phiresky <https://github.com/phiresky>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 declare namespace Wu {
 	type Consumer<T> = (t: T) => void;
 	type Filter<T> = (t: T) => boolean;
 
-	export interface WuStatic {
+	interface WuStatic {
 		<T>(iterable: Iterable<T>): WuIterable<T>;
 		// only static
 		chain<T>(...iters: Array<Iterable<T>>): WuIterable<T>;
@@ -62,7 +62,7 @@ declare namespace Wu {
 		tee<T>(iter: Iterable<T>): Array<WuIterable<T>>;
 		tee<T>(n: number, iter: Iterable<T>): Array<WuIterable<T>>;
 	}
-	export interface WuIterable<T> extends IterableIterator<T> {
+	interface WuIterable<T> extends IterableIterator<T> {
 		// generated from section "copied to WuIterable" above via
 		// sed -r 's/(, )?iter: Iterable<\w+>//' |
 		// sed -r 's/^(\s+\w+)<T>/\1/' |

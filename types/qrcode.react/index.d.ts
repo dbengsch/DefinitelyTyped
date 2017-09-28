@@ -2,12 +2,12 @@
 // Project: https://github.com/zpao/qrcode.react
 // Definitions by: Mleko <https://github.com/mleko>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
 /// <reference types="react" />
 
 declare namespace qrcode {
-	export interface QRCodeProps {
+	interface QRCodeProps {
 		value: string;
 		size?: number;
 		bgColor?: string;
@@ -15,7 +15,7 @@ declare namespace qrcode {
 		level?: "L"|"M"|"Q"|"H";
 	}
 
-	export type QRCode = React.ComponentClass<QRCodeProps>;
+	type QRCode = React.ComponentClass<QRCodeProps>;
 }
 
 declare const qrcode: qrcode.QRCode;

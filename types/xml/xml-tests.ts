@@ -1,4 +1,4 @@
-// Code get from the test file of http://github.com/dylang/node-xml
+// Code get from the test file of https://github.com/dylang/node-xml
 
 import * as xml from "xml";
 
@@ -7,12 +7,11 @@ interface Tester {
   same(a: any, b: any): void;
   plan(id: number): void;
   ok(a: any): void;
-};
+}
 
 function test(c: string, f: (t: Tester) => void) {
   return;
 }
-
 
 test('no elements', t => {
     t.is(xml(), '');
@@ -115,7 +114,7 @@ test('supports stream interface', t => {
         t.is(stanza, results.shift());
     });
 
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         xmlStream.on('close', () => {
             t.same(results, []);
             resolve();
@@ -146,7 +145,7 @@ test('streams end properly', t => {
         t.ok(gotData);
     });
 
-    return new Promise( (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         xmlStream.on('close',  () => {
             t.ok(gotData);
             resolve();

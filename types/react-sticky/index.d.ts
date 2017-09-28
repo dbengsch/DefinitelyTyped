@@ -2,26 +2,22 @@
 // Project: https://github.com/captivationsoftware/react-sticky
 // Definitions by: Matej Lednicky <http://www.thinkcreatix.com/>, Curtis Warren <https://github.com/curtisw0>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
 import * as React from "react";
 
-declare module "react-sticky" {
+export const StickyContainer: React.ComponentClass<React.HTMLAttributes<HTMLDivElement>>;
 
-    export var StickyContainer: React.ComponentClass<React.HTMLAttributes<HTMLDivElement>>;
-
-    export interface StickyProps {
-        isActive?: boolean;
-        className?: string;
-        style?: any;
-        stickyClassName?: string;
-        stickyStyle?: any;
-        topOffset?: number;
-        bottomOffset?: number;
-        onStickyStateChange?: (isSticky: boolean) => void;
-    }
-
-    export var Sticky: React.ComponentClass<StickyProps>;
-
+export interface StickyProps {
+    isActive?: boolean;
+    className?: string;
+    style?: any;
+    stickyClassName?: string;
+    stickyStyle?: any;
+    topOffset?: number;
+    bottomOffset?: number;
+    onStickyStateChange?(isSticky: boolean): void;
+    disableCompensation?: boolean;
 }
 
+export const Sticky: React.ComponentClass<StickyProps>;

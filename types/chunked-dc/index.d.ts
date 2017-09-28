@@ -1,18 +1,17 @@
 // Type definitions for chunked-dc 0.1
 // Project: https://github.com/saltyrtc/chunked-dc-js
-// Definitions by: Danilo Bargen <https://github.com/dbrgn/>
+// Definitions by: Danilo Bargen <https://github.com/dbrgn>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 // Interfaces
 declare namespace chunkedDc {
-
-    /** common.ts **/
+    /** common.ts */
 
     interface CommonStatic {
         HEADER_LENGTH: number;
     }
 
-    /** chunker.ts **/
+    /** chunker.ts */
 
     interface Chunker extends IterableIterator<Uint8Array> {
         hasNext: boolean;
@@ -24,7 +23,7 @@ declare namespace chunkedDc {
         new(id: number, message: Uint8Array, chunkSize: number): Chunker;
     }
 
-    /** unchunker.ts **/
+    /** unchunker.ts */
 
     type MessageListener = (message: Uint8Array, context?: any) => void;
 
@@ -38,13 +37,12 @@ declare namespace chunkedDc {
         new(): Unchunker;
     }
 
-    /** main.ts **/
+    /** main.ts */
 
     interface Standalone {
         Chunker: ChunkerStatic;
         Unchunker: UnchunkerStatic;
     }
-
 }
 
 // Entry point for the packed ES5 version:

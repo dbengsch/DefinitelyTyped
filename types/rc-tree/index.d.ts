@@ -1,8 +1,8 @@
 // Type definitions for rc-tree 1.4
 // Project: https://github.com/react-component/tree
-// Definitions by: John Reilly <https://github.com/johnnyreilly/>
+// Definitions by: John Reilly <https://github.com/johnnyreilly>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
 import {
     Component,
@@ -36,7 +36,7 @@ export interface TreeNodeProps extends Props<TreeNode> {
     isLeaf?: boolean;
 }
 
-export class TreeNode extends Component<TreeNodeProps, {}> { }
+export class TreeNode extends Component<TreeNodeProps> { }
 
 export interface ExpandData {
     expanded: boolean;
@@ -57,7 +57,6 @@ export interface SelectData {
     node: TreeNode;
     event: "select";
 }
-
 
 export interface TreeProps extends Props<Tree> {
     /**
@@ -129,27 +128,27 @@ export interface TreeProps extends Props<Tree> {
     /**
      * fire on treeNode expand or not
      */
-    onExpand?: (expandedKeys: string[], e: ExpandData) => void;
+    onExpand?(expandedKeys: string[], e: ExpandData): void;
     /**
      * click the treeNode/checkbox to fire
      */
-    onCheck?: (checkedKeys: string[], e: CheckData) => void;
+    onCheck?(checkedKeys: string[], e: CheckData): void;
     /**
      * click the treeNode to fire
      */
-    onSelect?: (selectedKeys: string[], e: SelectData) => void;
+    onSelect?(selectedKeys: string[], e: SelectData): void;
     /**
      * filter some treeNodes as you need.
      */
-    filterTreeNode?: (node: TreeNode) => boolean;
+    filterTreeNode?(node: TreeNode): boolean;
     /**
      * load data asynchronously
      */
-    loadData?: (node: TreeNode) => Promise<any>;
+    loadData?(node: TreeNode): Promise<any>;
     /**
      * whether can drag treeNode.
      */
     draggable?: boolean;
 }
 
-export default class Tree extends Component<TreeProps, {}> { }
+export default class Tree extends Component<TreeProps> { }

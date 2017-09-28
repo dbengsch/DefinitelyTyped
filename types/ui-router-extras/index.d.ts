@@ -1,16 +1,15 @@
 // Type definitions for ui-router-extras 0.1
 // Project: https://github.com/christopherthielen/ui-router-extras
-// Definitions by: Michael Putters <https://github.com/mputters/>, Marcel van de Kamp <https://github.com/marcel-k/>, Viktor Smirnov <https://github.com/LaserUnicorns/>
+// Definitions by: Michael Putters <https://github.com/mputters>, Marcel van de Kamp <https://github.com/marcel-k>, Viktor Smirnov <https://github.com/LaserUnicorns>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
 
 /// <reference types="angular-ui-router" />
 
 import * as angular from 'angular';
 
 declare module 'angular' {
-    export namespace ui {
-
-
+    namespace ui {
         /*
          * $deepStateRedirect
          */
@@ -49,7 +48,7 @@ declare module 'angular' {
 
         interface IRedirectParams {
             state: string;
-            params?: ui.IStateParamsService;
+            params?: IStateParamsService;
         }
 
         /*
@@ -57,14 +56,13 @@ declare module 'angular' {
          */
         interface IPreviousState {
             state: IState;
-            params?: ui.IStateParamsService;
+            params?: IStateParamsService;
         }
 
         /**
          * Previous state service
          */
         interface IPreviousStateService {
-
             /**
              * Get a previous state
              * @param memoName Memo name
@@ -78,7 +76,7 @@ declare module 'angular' {
              * @param options State options
              * @return Promise
              */
-            go(memoName: string, options?: IStateOptions): angular.IPromise<any>;
+            go(memoName: string, options?: IStateOptions): IPromise<any>;
 
             /**
              * Memorize a state
@@ -96,9 +94,9 @@ declare module 'angular' {
         }
 
         /**
-        * Sticky state
-        */
-        interface IStickyState extends angular.ui.IState {
+         * Sticky state
+         */
+        interface IStickyState extends IState {
             /*
             * When marking a state sticky, the state must target its own unique named ui-view.
             * Docs: http://christopherthielen.github.io/ui-router-extras/#/sticky
@@ -117,17 +115,16 @@ declare module 'angular' {
             /*
              * Function (injectable). Called when a sticky state is navigated away from (inactivated).
              */
-            onInactivate?: (...args: any[]) => void;
+            onInactivate?(...args: any[]): void;
             /*
              * Function (injectable). Called when an inactive sticky state is navigated to (reactivated).
              */
-            onReactivate?: (...args: any[]) => void;
+            onReactivate?(...args: any[]): void;
             /*
              * Note: named views are mandatory when using sticky states!
              */
-            views?: { [name: string]: angular.ui.IState };
+            views?: { [name: string]: IState };
         }
-
 
         /**
          * Sticky state service
@@ -139,20 +136,18 @@ declare module 'angular' {
         /**
          * Sticky state provider
          */
-        interface IStickyStateProvider extends angular.IServiceProvider {
+        interface IStickyStateProvider extends IServiceProvider {
             debugMode(): boolean;
             enableDebug(enabled: boolean): boolean;
             registerStickyState(state: IStickyState): void;
         }
 
-        interface IStateProvider extends angular.IServiceProvider {
+        interface IStateProvider extends IServiceProvider {
             state(config: IStickyState): IStateProvider;
             state(name: string, config: IStickyState): IStateProvider;
         }
 
-
         interface IFutureStateProvider {
-
             /**
              * Registers a `FutureState` object as a placeholder for a full UI-Router `state` or `state` tree.
              */
@@ -164,31 +159,28 @@ declare module 'angular' {
             stateFactory(type: string, stateFactory: IFutureStateFactory): void;
 
             /**
-             * Adds a resolve function. 
-             * `$futureStateProvider` won't reject any state transitions or routes until all resolveFunction promises have been resolved. 
+             * Adds a resolve function.
+             * `$futureStateProvider` won't reject any state transitions or routes until all resolveFunction promises have been resolved.
              * Resolves may be used to defer routing until the states have been loaded via $http, for instance.
              */
             addResolve(resolveFn: IResolveFunction): void;
         }
 
-        interface IFutureStateService {
-
-        }
+        interface IFutureStateService {}
 
         /**
          * A `FutureState` object is a placeholder for full a UI-Router `state`
          */
         interface IFutureState {
-
             /**
-             * The placeholder state name (fully qualified). 
+             * The placeholder state name (fully qualified).
              * Attempted transitions to this state (or any substates) will trigger a lazy load of the full UI-Router `state` represented by this FutureState.
              */
             stateName: string;
 
             /**
-             * The placeholder url path fragment (the fragment is the URL prefix which the state will be accessed on, not the URL of the state's source code). 
-             * Attempted navigations to a URL starting with this fragment will trigger a lazy load of the full UI-Router `state` represented by this FutureState. 
+             * The placeholder url path fragment (the fragment is the URL prefix which the state will be accessed on, not the URL of the state's source code).
+             * Attempted navigations to a URL starting with this fragment will trigger a lazy load of the full UI-Router `state` represented by this FutureState.
              */
             url: string;
 
@@ -203,8 +195,8 @@ declare module 'angular' {
         /**
          * `StateFactory` factories convert `FutureState` into a full UI-Router `state`, or `state` tree
          */
-        type IFutureStateFactory = angular.Injectable<(...args: any[]) => angular.IPromise<ui.IState | undefined>>;
+        type IFutureStateFactory = Injectable<(...args: any[]) => IPromise<IState | undefined>>;
 
-        type IResolveFunction = angular.Injectable<(...args: any[]) => angular.IPromise<any>>;
+        type IResolveFunction = Injectable<(...args: any[]) => IPromise<any>>;
     }
 }

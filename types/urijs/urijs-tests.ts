@@ -39,6 +39,10 @@ URI('http://example.org/foo/hello.html').segment('bar');
 URI('http://example.org/foo/hello.html').segment(0, 'bar');
 URI('http://example.org/foo/hello.html').segment(['foo', 'bar', 'foobar.html']);
 
+URI('http://example.org/foo/hello.html').segmentCoded('foo bar');
+URI('http://example.org/foo/hello.html').segmentCoded(0, 'foo bar');
+URI('http://example.org/foo/hello.html').segmentCoded(['foo bar', 'bar foo', 'foo bar.html']);
+
 var withDuplicates = URI("?bar=1&bar=1")
   .duplicateQueryParameters(true)
   .normalizeQuery()
@@ -91,3 +95,19 @@ uri.hasQuery(/^li/, "two") === true;
 uri.hasQuery("string", (value : string, name : string, data : string) => {
     return true;
 }) === true;
+
+/*
+Tests for removeSearch()
+From: https://medialize.github.io/URI.js/docs.html#search-remove
+*/
+var uri = new URI("?hello=world&hello=mars&foo=bar");
+uri.removeSearch("hello");
+uri.search(true) === "?foo=bar";
+
+uri.search("?hello=world&hello=mars&foo=bar");
+uri.removeSearch("hello", "world");
+uri.search(true) === "?hello=mars&foo=bar"
+
+uri.search("?hello=world&hello=mars&foo=bar&mine=true");
+uri.removeSearch(["hello", "foo"]);
+uri.search(true) === "?mine=true"

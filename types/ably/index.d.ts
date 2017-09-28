@@ -1,9 +1,9 @@
 // Type definitions for Ably Realtime and Rest client library 0.9
 // Project: https://www.ably.io/
-// Definitions by: Ably <https://github.com/ably/>
+// Definitions by: Ably <https://github.com/ably>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-declare namespace ablyLib {
+export namespace ablyLib {
   namespace ChannelState {
     type INITIALIZED = 'initialized';
     type ATTACHING = 'attaching';
@@ -130,15 +130,15 @@ declare namespace ablyLib {
      * A function which is called when a new token is required.
      * The role of the callback is to either generate a signed TokenRequest which may then be submitted automatically
      * by the library to the Ably REST API requestToken; or to provide a valid token in as a TokenDetails object.
-     **/
-    authCallback?: (data: TokenParams, callback: (error: ErrorInfo | string, tokenRequestOrDetails: TokenDetails | TokenRequest | string) => void) => void;
+     */
+    authCallback?(data: TokenParams, callback: (error: ErrorInfo | string, tokenRequestOrDetails: TokenDetails | TokenRequest | string) => void): void;
     authHeaders?: { [index: string]: string };
     authMethod?: HTTPMethods;
     authParams?: { [index: string]: string };
 
     /**
      * A URL that the library may use to obtain a token string (in plain text format), or a signed TokenRequest or TokenDetails (in JSON format).
-     **/
+     */
     authUrl?: string;
     key?: string;
     queryTime?: boolean;
@@ -259,13 +259,13 @@ declare namespace ablyLib {
     /**
      * A number controlling the verbosity of the output. Valid values are: 0 (no logs), 1 (errors only),
      * 2 (errors plus connection and channel state changes), 3 (high-level debug output), and 4 (full debug output).
-     **/
+     */
     level?: number;
 
     /**
      * A function to handle each line of log output. If handler is not specified, console.log is used.
-     **/
-    handler?: (...args: any[]) => void;
+     */
+    handler?(...args: any[]): void;
   }
 
   interface ChannelEvent {
@@ -287,7 +287,7 @@ declare namespace ablyLib {
   }
 
   // Common Listeners
-  type paginatedResultCallback<T> = (error: ErrorInfo, results: PaginatedResult<T> ) => void;
+  type paginatedResultCallback<T> = (error: ErrorInfo, results: PaginatedResult<T>) => void;
   type standardCallback = (error: ErrorInfo, results: any) => void;
   type messageCallback<T> = (message: T) => void;
   type errorCallback = (error: ErrorInfo) => void;
@@ -398,7 +398,7 @@ declare namespace ablyLib {
   }
 
   interface Crypto {
-    generateRandomKey: (callback: (error: ErrorInfo, key: string) => void) => void;
+    generateRandomKey(callback: (error: ErrorInfo, key: string) => void): void;
   }
 
   class Connection extends EventEmitter<connectionEventCallback> {
@@ -410,7 +410,7 @@ declare namespace ablyLib {
     state: ConnectionState;
     close: () => void;
     connect: () => void;
-    ping: (callback?: (error: ErrorInfo, responseTime: number ) => void ) => void;
+    ping: (callback?: (error: ErrorInfo, responseTime: number) => void) => void;
   }
 
   class Stats {

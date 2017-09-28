@@ -2,12 +2,12 @@
 // Project: https://github.com/brianc/node-libpq#readme
 // Definitions by: Vlad Rindevich <https://github.com/Lodin>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.2
 
 /// <reference types="node" />
 
-import {EventEmitter} from 'events';
-import {Buffer} from 'buffer';
+import { EventEmitter } from 'events';
+import { Buffer } from 'buffer';
 
 declare namespace Libpq {
     interface NotifyMsg {
@@ -102,7 +102,7 @@ declare class Libpq extends EventEmitter {
      * @returns {boolean} true if data was read; false if there was an error. You can access
      *                    error details with [[Libpq.errorMessage]].
      */
-    consumeInput(): boolean
+    consumeInput(): boolean;
 
     /**
      * Retrieves the last error message from the connection. This is intended to be used after most

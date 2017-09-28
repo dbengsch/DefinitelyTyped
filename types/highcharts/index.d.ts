@@ -1,7 +1,11 @@
-// Type definitions for Highcharts 4.2
+// Type definitions for Highcharts 5.0.10
 // Project: http://www.highcharts.com/
-// Definitions by: Damiano Gambarotto <http://github.com/damianog>, Dan Lewi Harkestad <http://github.com/baltie>, Albert Ozimek <https://github.com/AlbertOzimek>
+// Definitions by: Damiano Gambarotto <https://github.com/damianog>
+//                 Dan Lewi Harkestad <https://github.com/baltie>
+//                 Albert Ozimek <https://github.com/AlbertOzimek>
+//                 Juliën Hanssens <https://github.com/hanssens>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
 
 declare namespace Highcharts {
     interface Position {
@@ -96,7 +100,7 @@ declare namespace Highcharts {
          * this are axis, chart, isFirst and isLast.
          * @default function() {return this.value;}
          */
-        formatter?: () => string;
+        formatter?(): string;
         /**
          * Horizontal axis only. When staggerLines is not set, maxStaggerLines defines how many lines the axis is allowed to
          * add to automatically avoid overlapping X labels. Set to 1 to disable overlap detection.
@@ -173,10 +177,10 @@ declare namespace Highcharts {
     }
 
     interface MousePlotEvents {
-        click?: (event: Event) => void;
-        mouseover?: (event: Event) => void;
-        mouseout?: (event: Event) => void;
-        mousemove?: (event: Event) => void;
+        click?(event: Event): void;
+        mouseover?(event: Event): void;
+        mouseout?(event: Event): void;
+        mousemove?(event: Event): void;
     }
 
     /**
@@ -237,6 +241,11 @@ declare namespace Highcharts {
     }
 
     interface PlotBands {
+        /**
+         * A custom class name, in addition to the default highcharts-plot-band, to apply to each individual band.
+         * @since 5.0.0
+         */
+        className?: string;
         /**
          * Border color for the plot band. Also requires borderWidth to be set.
          * @default null
@@ -315,6 +324,11 @@ declare namespace Highcharts {
      */
     interface PlotLines {
         /**
+         * A custom class name, in addition to the default highcharts-plot-line, to apply to each individual line.
+         * @since 5.0.0
+         */
+        className?: string;
+        /**
          * The color of the line.
          */
         color?: string | Gradient;
@@ -354,6 +368,104 @@ declare namespace Highcharts {
          * @since 1.2
          */
         zIndex?: number;
+    }
+
+    /**
+     * Options for configuring accessibility for the chart. Requires the accessibility module to be loaded.
+     * For a description of the module and information on its features, see Highcharts Accessibility.
+     */
+    interface AccessibilityOptions {
+        /**
+         * Whether or not to add series descriptions to charts with a single series. Defaults to false.
+         * @since 5.0.0
+         */
+        describeSingleSeries?: boolean;
+
+        /**
+         * Enable accessibility features for the chart.
+         * @since 5.0.0
+         * @default true
+         */
+        enabled?: boolean;
+
+        /**
+         * Options for keyboard navigation.
+         * @since 5.0.0
+         */
+        keyboardNavigation?: KeyboardNavigationOptions;
+
+        /**
+         * Function to run upon clicking the "View as Data Table" link in the screen reader region.
+         * By default Highcharts will insert and set focus to a data table representation of the chart.
+         * @since 5.0.0
+         */
+        onTableAnchorClick?: Function;
+
+        /**
+         * Date format to use for points on datetime axes when describing them to screen reader users.
+         * Defaults to the same format as in tooltip.
+         * For an overview of the replacement codes, see dateFormat.
+         * @since 5.0.0
+         */
+        pointDateFormat?: string;
+
+        /**
+         * Formatter function to determine the date/time format used with points on datetime axes when describing them
+         * to screen reader users. Receives one argument, point, referring to the point to describe.
+         * Should return a date format string compatible with dateFormat.
+         * @since 5.0.0
+         */
+        pointDateFormatter?: Function;
+
+        /**
+         * Formatter function to use instead of the default for point descriptions. Receives one argument, point, referring to the point to describe.
+         * Should return a String with the description of the point for a screen reader user.
+         * @since 5.0.0
+         */
+        pointDescriptionFormatter?: Function;
+
+        /**
+         * When a series contains more points than this, we no longer expose information about individual points to screen readers.
+         * Set to false to disable.
+         * @since 5.0.0
+         * @default 30
+         */
+        pointDescriptionThreshold?: number | boolean;
+
+        /**
+         * A formatter function to create the HTML contents of the hidden screen reader information region. Receives one argument, chart, referring to the chart object.
+         * Should return a String with the HTML content of the region.
+         * @since 5.0.0
+         * @default undefined
+         */
+        screenReaderSectionFormatter?: Function;
+
+        /**
+         * Formatter function to use instead of the default for series descriptions. Receives one argument, series, referring to the series to describe.
+         * Should return a String with the description of the series for a screen reader user.
+         * @since 5.0.0
+         */
+        seriesDescriptionFormatter?: Function;
+    }
+
+    /**
+     * Options for keyboard navigation (accessibility.keyboardNavigation).
+     * @since 5.0.0
+     */
+    interface KeyboardNavigationOptions {
+        /**
+         * Enable keyboard navigation for the chart.
+         * @since 5.0.0
+         * @default true
+         */
+        enabled?: boolean;
+
+        /**
+         * Skip null points when navigating through points with the keyboard.
+         * @since 5.0.0
+         * @default false
+         */
+        skipNullPoints?: boolean;
     }
 
     interface AxisTitle {
@@ -463,12 +575,17 @@ declare namespace Highcharts {
          * categories: ['Apples', 'Bananas', 'Oranges']
          * @default null
          */
-        categories?: string[];
+        categories?: any[];
         /**
          * The highest allowed value for automatically computed axis extremes.
          * @since 4.0
          */
         ceiling?: number;
+        /**
+         * A class name that opens for styling the axis by CSS, especially in Highcharts styled mode. The class name is applied to group elements for the grid, axis elements and labels.
+         * @since 5.0.0
+         */
+        className?: string;
         /**
          * Configure a crosshair that follows either the mouse pointer or the hovered point.
          */
@@ -478,6 +595,12 @@ declare namespace Highcharts {
          * string representations used for each unit. For an overview of the replacement codes, see dateFormat.
          */
         dateTimeLabelFormats?: DateTimeFormats;
+        /**
+         * Description of the axis to screen reader users.
+         * @since 5.0.0
+         * @default undefined
+         */
+        description?: string;
         /**
          * Whether to force the axis to end on a tick. Use this option with the maxPadding option to control the axis end.
          * @default false
@@ -491,19 +614,19 @@ declare namespace Highcharts {
              * An event fired after the breaks have rendered.
              * @since 4.1.0
              */
-            afterBreaks?: (event: Event) => void;
+            afterBreaks?(event: Event): void;
             /**
              * As opposed to the setExtremes event, this event fires after the final min and max values are computed and
              * corrected for minRange.
              * The this keyword refers to the {@link AxisObject|Axis} object.
              * @since 2.3
              */
-            afterSetExtremes?: (event: AxisEvent) => void;
+            afterSetExtremes?(event: AxisEvent): void;
             /**
              * An event fired when a break from this axis occurs on a point.
              * The this keyword refers to the {@link AxisObject|Axis} object.
              */
-            pointBreak?: (event: Event) => void;
+            pointBreak?(event: Event): void;
             /**
              * Fires when the minimum and maximum is set for the axis, either by calling the .setExtremes() method or by
              * selecting an area in the chart. One parameter, event, is passed to the function. This contains common event
@@ -516,7 +639,7 @@ declare namespace Highcharts {
              * The this keyword refers to the {@link AxisObject|Axis} object.
              * @since 1.2.0
              */
-            setExtremes?: (event: AxisEvent) => void;
+            setExtremes?(event: AxisEvent): void;
         };
         /**
          * The lowest allowed value for automatically computed axis extremes.
@@ -728,11 +851,23 @@ declare namespace Highcharts {
          */
         showLastLabel?: boolean;
         /**
-        * Show the total value for each bar in a stacked column or bar chart.
-        * The label will be placed on top of positive columns and below negative columns.
-        * In case of an inverted column chart or a bar chart the label is placed to the right of positive bars and to the left of negative bars.
-        * Only used for yAxis
-        */
+         * A soft maximum for the axis. If the series data maximum is less than this, the axis will stay at this maximum,
+         * but if the series data maximum is higher, the axis will flex to show all data.
+         * @since 5.0.1
+         */
+        softMax?: number;
+        /**
+         * A soft minimum for the axis. If the series data minimum is greater than this, the axis will stay at this minimum,
+         * but if the series data minimum is lower, the axis will flex to show all data.
+         * @since 5.0.1
+         */
+        softMin?: number;
+        /**
+         * Show the total value for each bar in a stacked column or bar chart.
+         * The label will be placed on top of positive columns and below negative columns.
+         * In case of an inverted column chart or a bar chart the label is placed to the right of positive bars and to the left of negative bars.
+         * Only used for yAxis
+         */
         stackLabels?: {
             /**
              * Defines the horizontal alignment of the stack total label. Can be one of "left", "center" or "right".
@@ -820,7 +955,7 @@ declare namespace Highcharts {
          * Use this in cases where a linear gradient between a minColor and maxColor is not sufficient.
          * The stops is an array of tuples, where the first item is a float between 0 and 1 assigning the relative position in the gradient, and the second item is the color.
          */
-        stops?: [number, string][];
+        stops?: Array<[number, string]>;
         /**
          * The amount of ticks to draw on the axis. This opens up for aligning the ticks of multiple charts or panes within
          * a chart. This option overrides the tickPixelInterval option.
@@ -868,7 +1003,7 @@ declare namespace Highcharts {
          * behaviour of tickPixelInterval and tickInterval. The automatic tick positions are accessible through
          * this.tickPositions and can be modified by the callback.
          */
-        tickPositioner?: (min: number, max: number) => void;
+        tickPositioner?(min: number, max: number): void;
         /**
          * An array defining where the ticks are laid out on the axis. This overrides the default behaviour of
          * tickPixelInterval and tickInterval.
@@ -958,7 +1093,7 @@ declare namespace Highcharts {
              * corrected for minRange.
              * The this keyword refers to the {@link AxisObject|Axis} object.
              */
-            afterSetExtremes?: (event: AxisEvent) => void;
+            afterSetExtremes?(event: AxisEvent): void;
             /**
              * Fires when the minimum and maximum is set for the axis, either by calling the .setExtremes() method or by
              * selecting an area in the chart. One parameter, event, is passed to the function. This contains common event
@@ -970,7 +1105,7 @@ declare namespace Highcharts {
              *
              * The this keyword refers to the {@link AxisObject|Axis} object.
              */
-            setExtremes?: (event: AxisEvent) => void;
+            setExtremes?(event: AxisEvent): void;
         };
         /**
          * Color of the grid lines extending from the axis across the gradient.
@@ -1133,7 +1268,7 @@ declare namespace Highcharts {
          * and maxColor is not sufficient. The stops is an array of tuples, where the first item is a float between 0 and 1
          * assigning the relative position in the gradient, and the second item is the color.
          */
-        stops?: [number, string][];
+        stops?: Array<[number, string]>;
         /**
          * Color for the main tick marks.
          * @default '#C0D0E0'
@@ -1163,7 +1298,7 @@ declare namespace Highcharts {
          * A callback function returning array defining where the ticks are laid out on the axis. This overrides the default
          * behaviour of tickPixelInterval and tickInterval.
          */
-        tickPositioner?: (min: number, max: number) => void;
+        tickPositioner?(min: number, max: number): void;
         /**
          * An array defining where the ticks are laid out on the axis. This overrides the default behaviour of
          * tickPixelInterval and tickInterval.
@@ -1281,19 +1416,19 @@ declare namespace Highcharts {
          * The this keyword refers to the Chart object.
          * @since 1.2.0
          */
-        addSeries?: (event: AddSeriesEvent) => boolean | void;
+        addSeries?(event: AddSeriesEvent): boolean | void;
         /**
          * Fires after a chart is printed through the context menu item or the Chart.print method. Requires the exporting
          * module.
          * @since 4.1.0
          */
-        afterPrint?: (event: Event) => void;
+        afterPrint?(event: Event): void;
         /**
          * Fires before a chart is printed through the context menu item or the Chart.print method. Requires the exporting
          * module.
          * @since 4.1.0
          */
-        beforePrint?: (event: Event) => void;
+        beforePrint?(event: Event): void;
         /**
          * Fires when clicking on the plot background. One parameter, event, is passed to the function. This contains common
          * event information based on jQuery or MooTools depending on which library is used as the base for Highcharts.
@@ -1309,17 +1444,22 @@ declare namespace Highcharts {
          * The this keyword refers to the Chart object.
          * @since 1.2.0
          */
-        click?: (event: ChartClickEvent) => void;
+        click?(event: ChartClickEvent): void;
         /**
          * Fires when a drilldown point is clicked, before the new series is added.
          * @since 3.0.8
          */
-        drilldown?: (event: ChartDrilldownEvent) => void;
+        drilldown?(event: ChartDrilldownEvent): void;
         /**
          * Fires when drilling up from a drilldown series.
          * @since 3.0.8
          */
-        drillup?: (event: Event) => void;
+        drillup?(event: Event): void;
+        /**
+         * Fires after drilling up from all drilldown series.
+         * @since 4.2.4
+         */
+        drillupall?(event: Event): void;
         /**
          * Fires when the chart is finished loading. One parameter, event, is passed to the function. This contains common
          * event information based on jQuery or MooTools depending on which library is used as the base for Highcharts.
@@ -1329,7 +1469,7 @@ declare namespace Highcharts {
          *
          * The this keyword refers to the Chart object.
          */
-        load?: (event: Event) => void;
+        load?(event: Event): void;
         /**
          * Fires when the chart is redrawn, either after a call to chart.redraw() or after an axis, series or point is
          * modified with the redraw option set to true. One parameter, event, is passed to the function. This contains
@@ -1339,7 +1479,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Chart object.
          * @since 1.2.0
          */
-        redraw?: (event: Event) => void;
+        redraw?(event: Event): void;
         /**
          * Fires when an area of the chart has been selected. Selection is enabled by setting the chart's zoomType. One
          * parameter, event, is passed to the function. This contains common event information based on jQuery or MooTools
@@ -1360,7 +1500,7 @@ declare namespace Highcharts {
          *      console.log(event.yAxis[0].min, event.yAxis[0].max);
          * }
          */
-        selection?: (event: ChartSelectionEvent) => void;
+        selection?(event: ChartSelectionEvent): void;
     }
 
     interface LinearGradient {
@@ -1605,20 +1745,35 @@ declare namespace Highcharts {
          */
         className?: string;
         /**
+         * In styled mode, this sets how many colors the class names should rotate between. With ten colors,
+         * series (or points) are given class names like highcharts-color-0, highcharts-color-0 [...] highcharts-color-9.
+         * The equivalent in non-styled mode is to set colors using the colors setting.
+         * @since 5.0.0
+         * @default 10
+         */
+        colorCount?: number;
+        /**
          * Alias of type. Defaults to line.
          * @default 'line'
          * @deprecated
          */
         defaultSeriesType?: string;
         /**
+         *
+         */
+        description?: string;
+        /**
          * Event listeners for the chart.
          */
         events?: ChartEvents;
         /**
-         * An explicit height for the chart. By default the height is calculated from the offset height of the containing
-         * element, or 400 pixels if the containing element's height is 0.
+         * An explicit height for the chart. If a number, the height is given in pixels. If given a percentage string (for example '56%'),
+         * the height is given as the percentage of the actual chart width. This allows for preserving the aspect ratio across responsive sizes.
+         * By default (when null) the height is calculated from the offset height of the containing element, or 400 pixels if the containing element's height is 0.
+         * @default null
+         * @since 5.0.8
          */
-        height?: number;
+        height?: number | string;
         /**
          * If true, the axes will scale to the remaining visible series once one series is hidden. If false, hiding and
          * showing a series will not affect the axes or the other series. For stacks, once one series within the stack is
@@ -1806,6 +1961,14 @@ declare namespace Highcharts {
          */
         type?: string;
         /**
+         * A text description of the chart type.
+         * If the Accessibility module is loaded, this will be included in the description of the chart in the screen reader information region.
+         * Highcharts will by default attempt to guess the chart type, but for more complex charts it is recommended to specify this property for clarity.
+         * @since 5.0.0
+         * @default undefined
+         */
+        typeDescription?: string;
+        /**
          * An explicit width for the chart. By default the width is calculated from the offset width of the containing
          * element.
          */
@@ -1830,7 +1993,9 @@ declare namespace Highcharts {
         padding?: string | number;
         position?: string;
         top?: string;
-        textShadow?: string;
+        textOutline?: string;
+        textOverflow?: string;
+        whiteSpace?: string;
     }
 
     interface CreditsOptions {
@@ -1859,6 +2024,10 @@ declare namespace Highcharts {
         text?: string;
     }
 
+    interface CreditsObject extends CreditsOptions {
+        update(options: CreditsOptions): void;
+    }
+
     interface DataSeriesMapping {
         [pointPropertyName: string]: number;
     }
@@ -1879,14 +2048,14 @@ declare namespace Highcharts {
          * switchRowsAndColumns is set, the columns are interpreted as series.
          * @since 4.0
          */
-        columns?: [string | number][];
+        columns?: Array<[string | number]>;
         /**
          * The callback that is evaluated when the data is finished loading, optionally from an external source, and parsed.
          * The first argument passed is a finished chart options object, containing the series. These options can be
          * extended with additional options and passed directly to the chart constructor.
          * @since 4.0
          */
-        complete?: (options: Options) => void;
+        complete?(options: Options): void;
         /**
          * A comma delimited string to be parsed. Related options are startRow, endRow, startColumn and endColumn to delimit
          * what part of the table is used. The lineDelimiter and itemDelimiter options define the CSV delimiter formats.
@@ -1955,19 +2124,19 @@ declare namespace Highcharts {
          * timestamp on success.
          * @since 4.0
          */
-        parseDate?: (val: any) => number;
+        parseDate?(val: any): number;
         /**
          * A callback function to access the parsed columns, the two-dimentional input data array directly, before they are
          * interpreted into series data and categories. Return false to stop completion, or call this.complete() to continue
          * async.
          * @since 4.0
          */
-        parsed?: (columns: [string | number][]) => boolean | void;
+        parsed?(columns: Array<[string | number]>): boolean | void;
         /**
          * The same as the columns input option, but defining rows intead of columns.
          * @since 4.0
          */
-        rows?: [string | number][];
+        rows?: Array<[string | number]>;
         /**
          * An array containing object with Point property names along with what column id the property should be taken from.
          * @since 4.0.4
@@ -2080,7 +2249,7 @@ declare namespace Highcharts {
         /**
          * Callback function to run on click.
          */
-        onclick: () => void;
+        onclick(): void;
     }
 
     interface Button {
@@ -2184,7 +2353,7 @@ declare namespace Highcharts {
          * A click handler callback to use on the button directly instead of the popup menu.
          * @since 2.0
          */
-        onclick?: () => void;
+        onclick?(): void;
         /**
          * The symbol for the button. Points to a definition function in the Highcharts.Renderer.symbols collection. The
          * default exportIcon function is part of the exporting module.
@@ -2345,7 +2514,15 @@ declare namespace Highcharts {
          * charts in specific time zones using their local DST crossover dates, with the help of external libraries.
          * @since 4.1.0
          */
-        getTimezoneOffset?: (timestamp: number) => number;
+        getTimezoneOffset?(timestamp: number): number;
+        /**
+         * Requires moment.js. If the timezone option is specified, it creates a default getTimezoneOffset function that
+         * looks up the specified timezone in moment.js. If moment.js is not included, this throws a Highcharts error in
+         * the console, but does not crash the chart.
+         * @default undefined
+         * @since 5.0.7
+         */
+        timezone?: string;
         /**
          * The timezone offset in minutes. Positive values are west, negative values are east of UTC, as in the ECMAScript
          * getTimezoneOffset method. Use this to display UTC based data in a predefined time zone.
@@ -2440,6 +2617,13 @@ declare namespace Highcharts {
          * @since 3.0.8
          */
         noData?: string;
+        /**
+         * The magnitude of numericSymbols replacements.
+         * Use 10000 for Japanese, Korean and various Chinese locales, which use symbols for 10^4, 10^8 and 10^12.
+         * @since 5.0.3
+         * @default 1000
+         */
+        numericSymbolMagnitude?: number;
         /**
          * Metric prefixes used to shorten high numbers in axis labels. Replacing any of the positions with null causes the
          * full number to be written. Setting numericSymbols to null disables shortening altogether.
@@ -2624,7 +2808,7 @@ declare namespace Highcharts {
          * Callback function to format each of the series' labels. The this keyword refers to the series object, or the
          * point object in case of pie charts. By default the series or point name is printed.
          */
-        labelFormatter?: () => string;
+        labelFormatter?(): string;
         /**
          * The layout of the legend items. Can be one of 'horizontal' or 'vertical'.
          * @default 'horizontal'
@@ -2851,6 +3035,12 @@ declare namespace Highcharts {
          */
         borderWidth?: number;
         /**
+         * The class name for this background.
+         * @since 5.0.0
+         * @default 'highcharts-pane'
+         */
+        className?: string;
+        /**
          * @default 0
          */
         innerRadius?: number | string;
@@ -2898,6 +3088,90 @@ declare namespace Highcharts {
          * @since 2.3.0
          */
         startAngle?: number;
+    }
+
+    /**
+     * Allows setting a set of rules to apply for different screen or chart sizes.
+     * Each rule specifies additional chart options.
+     * @since 5.0.0
+     */
+    interface ResponsiveOptions {
+        /**
+         * A set of rules for responsive settings. The rules are executed from the top down.
+         * @since 5.0.0
+         */
+        rules?: RulesOptions[];
+    }
+
+    /**
+     * A set of rules for responsive settings. The rules are executed from the top down.
+     */
+    interface RulesOptions {
+        /**
+         * A full set of chart options to apply as overrides to the general chart options.
+         * The chart options are applied when the given rule is active.
+         *
+         * A special case is configuration objects that take arrays, for example xAxis, yAxis or series.
+         * For these collections, an id option is used to map the new option set to an existing object.
+         * If an existing object of the same id is not found, the item of the same indexupdated.
+         * So for example, setting chartOptions with two series items without an id, will cause the existing
+         * chart's two series to be updated with respective options.
+         * @since 5.0.0
+         */
+        chartOptions?: ChartOptions;
+
+        /**
+         * Under which conditions the rule applies.
+         * @since 5.0.0
+         */
+        condition?: ConditionOptions;
+    }
+
+    interface TitleObject extends TitleOptions {
+        /**
+         * Update method that points back to Chart.setTitle.
+         * @since 5.0.0
+         */
+        update(options: TitleOptions): void;
+    }
+
+    /**
+     * Under which conditions the rule applies.
+     */
+    interface ConditionOptions {
+        /**
+         * A callback function to gain complete control on when the responsive rule applies. Return true if it applies.
+         * This opens for checking against other metrics than the chart size, or example the document size or other elements.
+         * The this keyword refers to the Chart object.
+         * @since 5.0.0
+         */
+        callback?: Function;
+
+        /**
+         * The responsive rule applies if the chart height is less than this.
+         * @since 5.0.0
+         */
+        maxHeight?: number;
+
+        /**
+         * The responsive rule applies if the chart height is less than this.
+         * @since 5.0.0
+         */
+        maxWidth?: number;
+
+        /**
+         * The responsive rule applies if the chart height is greater than this.
+         * @since 5.0.0
+         * @default 0
+         */
+        minHeight?: number;
+
+        /**
+         * The responsive rule applies if the chart width is greater than this.
+         * @since 5.0.0
+         * @default 0
+         */
+        minWidth?: number;
     }
 
     interface DataLabels {
@@ -2983,7 +3257,7 @@ declare namespace Highcharts {
          * - this.x:         The x value.
          * - this.y:         The y value.
          */
-        formatter?: () => string;
+        formatter?(): string;
         /**
          * For points with an extent, like columns, whether to align the data label inside the box or to the actual value
          * point. Defaults to false in most cases, true in stacked columns.
@@ -3126,7 +3400,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Series object.
          * @since 4.0
          */
-        afterAnimate?: (event: Event) => void;
+        afterAnimate?(event: Event): void;
         /**
          * Fires when the checkbox next to the series' name in the legend is clicked. One parameter, event, is passed to the
          * function. The state of the checkbox is found by event.checked. The checked item is found by event.item. Return
@@ -3135,7 +3409,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Series object.
          * @since 1.2.0
          */
-        checkboxClick?: (event: AreaCheckboxEvent) => boolean | void;
+        checkboxClick?(event: AreaCheckboxEvent): boolean | void;
         /**
          * Fires when the series is clicked. One parameter, event, is passed to the function. This contains common event
          * information based on jQuery or MooTools depending on which library is used as the base for Highcharts.
@@ -3143,14 +3417,14 @@ declare namespace Highcharts {
          *
          * The this keyword refers to the Series object.
          */
-        click?: (event: AreaClickEvent) => void;
+        click?(event: AreaClickEvent): void;
         /**
          * Fires when the series is hidden after chart generation time, either by clicking the legend item or by calling
          * .hide().
          *
          * The this keyword refers to the Series object.
          */
-        hide?: () => void;
+        hide?(): void;
         /**
          * Fires when the legend item belonging to the series is clicked. One parameter, event, is passed to the function.
          * This contains common event information based on jQuery or MooTools depending on which library is used as the base
@@ -3159,7 +3433,7 @@ declare namespace Highcharts {
          *
          * The this keyword refers to the Series object.
          */
-        legendItemClick?: (event: Event) => boolean | void;
+        legendItemClick?(event: Event): boolean | void;
         /**
          * Fires when the mouse leaves the graph. One parameter, event, is passed to the function. This contains common
          * event information based on jQuery or MooTools depending on which library is used as the base for Highcharts. If
@@ -3168,14 +3442,14 @@ declare namespace Highcharts {
          *
          * The this keyword refers to the Series object.
          */
-        mouseOut?: (event: Event) => void;
+        mouseOut?(event: Event): void;
         /**
          * Fires when the mouse enters the graph. One parameter, event, is passed to the function. This contains common
          * event information based on jQuery or MooTools depending on which library is used as the base for Highcharts.
          *
          * The this keyword refers to the Series object.
          */
-        mouseOver?: (event: Event) => void;
+        mouseOver?(event: Event): void;
         /**
          * Fires when the series is shown after chart generation time, either by clicking the legend item or by calling
          * .show().
@@ -3183,7 +3457,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Series object.
          * @since 1.2.0
          */
-        show?: () => void;
+        show?(): void;
     }
 
     interface MarkerState {
@@ -3273,7 +3547,7 @@ declare namespace Highcharts {
          *
          * The this keyword refers to the Point object.
          */
-        click?: (event: Event) => boolean;
+        click?(event: Event): boolean;
         /**
          * Fires when the mouse leaves the area close to the point. One parameter, event, is passed to the function. This
          * contains common event information based on jQuery or MooTools depending on which library is used as the base for
@@ -3281,7 +3555,7 @@ declare namespace Highcharts {
          *
          * The this keyword refers to the Point object.
          */
-        mouseOut?: (event: Event) => void;
+        mouseOut?(event: Event): void;
         /**
          * Fires when the mouse enters the area close to the point. One parameter, event, is passed to the function. This
          * contains common event information based on jQuery or MooTools depending on which library is used as the base for
@@ -3289,7 +3563,7 @@ declare namespace Highcharts {
          *
          * The this keyword refers to the Point object.
          */
-        mouseOver?: (event: Event) => void;
+        mouseOver?(event: Event): void;
         /**
          * Fires when the point is removed using the .remove() method. One parameter, event, is passed to the function.
          * Returning false cancels the operation.
@@ -3297,7 +3571,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Point object.
          * @since 1.2.0
          */
-        remove?: (event: Event) => boolean | void;
+        remove?(event: Event): boolean | void;
         /**
          * Fires when the point is selected either programmatically or following a click on the point. One parameter, event,
          * is passed to the function. Returning false cancels the operation.
@@ -3305,7 +3579,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Point object.
          * @since 1.2.0
          */
-        select?: (event: Event) => boolean | void;
+        select?(event: Event): boolean | void;
         /**
          * Fires when the point is unselected either programmatically or following a click on the point. One parameter,
          * event, is passed to the function. Returning false cancels the operation.
@@ -3313,7 +3587,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Point object.
          * @since 1.2.0
          */
-        unselect?: (event: Event) => boolean | void;
+        unselect?(event: Event): boolean | void;
         /**
          * Fires when the point is updated programmatically through the .update() method. One parameter, event, is passed to
          * the function. The new point options can be accessed through event.options. Returning false cancels the operation.
@@ -3321,14 +3595,14 @@ declare namespace Highcharts {
          * The this keyword refers to the Point object.
          * @since 1.2.0
          */
-        update?: (event: Event) => boolean | void;
+        update?(event: Event): boolean | void;
         /**
          * Fires when the legend item belonging to the pie point (slice) is clicked.
          * The this keyword refers to the point itself. One parameter, event, is passed to the function.
          * This contains common event information based on jQuery or MooTools depending on which library is used as the base for Highcharts.
          * The default action is to toggle the visibility of the point. This can be prevented by calling event.preventDefault().
          */
-        legendItemClick?: (event: Event) => boolean | void;
+        legendItemClick?(event: Event): boolean | void;
     }
 
     interface Halo {
@@ -3353,6 +3627,12 @@ declare namespace Highcharts {
     }
 
     interface LineStates {
+        /**
+         * Animation setting for hovering the graph in line-type series.
+         * @default { "duration": 50 }
+         * @since 5.0.8
+         */
+        animation?: boolean | Animation;
         /**
          * Enable separate styles for the hovered series to visualize that the user hovers either the series itself or the
          * legend.
@@ -3414,6 +3694,11 @@ declare namespace Highcharts {
     interface PieStates extends BarStates, LineStates { }
 
     interface AreaZone {
+        /**
+         * Styled mode only. A custom class name for the zone.
+         * @since 5.0.0
+         */
+        className?: string;
         /**
          * Defines the color of the series.
          * @since 4.1.0
@@ -3516,7 +3801,7 @@ declare namespace Highcharts {
          * - this.x:         The x value.
          * - this.y:         The y value.
          */
-        formatter?: () => string;
+        formatter?(): string;
         /**
          * For points with an extent, like columns, whether to align the data label inside the box or to the actual value
          * point. Defaults to false in most cases, true in stacked columns.
@@ -3753,6 +4038,11 @@ declare namespace Highcharts {
          */
         animation?: boolean | Animation;
         /**
+         * A class name to apply to the series' graphical elements.
+         * @since 5.0.0
+         */
+        className?: string;
+        /**
          * The main color or the series. In line type series it applies to the line and the point markers unless otherwise
          * specified. In bar type series it applies to the bars unless a color is specified per point. The default value is
          * pulled from the options.colors array.
@@ -3809,6 +4099,15 @@ declare namespace Highcharts {
          */
         enableMouseTracking?: boolean;
         events?: PlotEvents;
+        /**
+         * Determines whether the series should look for the nearest point in both dimensions or just the x-dimension when
+         * hovering the series. Defaults to 'xy' for scatter series and 'x' for most other series. If the data has duplicate
+         * x-values, it is recommended to set this to 'xy' to allow hovering over all points.
+         *
+         * Applies only to series types using nearest neighbor search (not direct hover) for tooltip.
+         * @since 5.0.10
+         */
+        findNearestPointBy?: string;
         /**
          * Whether to use the Y extremes of the total chart width or only the zoomed area when zooming in on parts of the X
          * axis. By default, the Y axis adjusts to the min and max of the visible data. Cartesian series only.
@@ -4063,11 +4362,10 @@ declare namespace Highcharts {
          */
         colorByPoint?: boolean;
         /**
-         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is
-         * true.
+         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is true.
          * @since 3.0
          */
-        colors?: string[];
+        colors?: Color[];
         /**
          * Depth of the columns in a 3D column chart. Requires highcharts-3d.js.
          * @default 25
@@ -4285,11 +4583,10 @@ declare namespace Highcharts {
          */
         colorByPoint?: boolean;
         /**
-         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is
-         * true.
+         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is true.
          * @since 3.0
          */
-        colors?: string[];
+        colors?: Color[];
         /**
          * Depth of the columns in a 3D column chart. Requires highcharts-3d.js.
          * @default 25
@@ -4422,7 +4719,7 @@ declare namespace Highcharts {
          * A series specific or series type specific color set to use instead of the global colors.
          * @since 3.0
          */
-        colors?: string[];
+        colors?: Color[];
         dataLabels?: PieDataLabels;
         /**
          * The thickness of a 3D pie. Requires highcharts-3d.js
@@ -4546,11 +4843,10 @@ declare namespace Highcharts {
          */
         colorByPoint?: boolean;
         /**
-         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is
-         * true.
+         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is true.
          * @since 3.0
          */
-        colors?: string[];
+        colors?: Color[];
         /**
          * The columns size - how many X axis units each column in the heatmap should span.
          * @default 1
@@ -4625,10 +4921,10 @@ declare namespace Highcharts {
          */
         center?: [string | number, string | number];
         /**
-         * A series specific or series type specific color set to use instead of the global colors.
+         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is true.
          * @since 3.0
          */
-        colors?: string[];
+        colors?: Color[];
         dataLabels?: PieDataLabels;
         /**
          * The thickness of a 3D pie. Requires highcharts-3d.js
@@ -4729,10 +5025,10 @@ declare namespace Highcharts {
          */
         center?: [string | number, string | number];
         /**
-         * A series specific or series type specific color set to use instead of the global colors.
+         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is true.
          * @since 3.0
          */
-        colors?: string[];
+        colors?: Color[];
         dataLabels?: PieDataLabels;
         /**
          * The thickness of a 3D pie. Requires highcharts-3d.js
@@ -4798,6 +5094,18 @@ declare namespace Highcharts {
          */
         overshoot?: number;
         /**
+         * Wether to draw rounded edges on the gauge.
+         * @default false
+         * @since 5.0.8
+         */
+        rounded?: boolean;
+        /**
+         * The threshold or base level for the gauge.
+         * @default null
+         * @since 5.0.3
+         */
+        threshold?: number;
+        /**
          * When this option is true, the dial will wrap around the axes. For instance, in a full-range gauge going from 0 to
          * 360, a value of 400 will point to 40. When wrap is false, the dial stops at 360.
          * @default true
@@ -4844,11 +5152,10 @@ declare namespace Highcharts {
          */
         colorByPoint?: boolean;
         /**
-         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is
-         * true.
+         * A series specific or series type specific color set to apply instead of the global colors when colorByPoint is true.
          * @since 3.0
          */
-        colors?: string[];
+        colors?: Color[];
         /**
          * This option decides if the user can interact with the parent nodes or just the leaf nodes. When this option is
          * undefined, it will be true by default. However when allowDrillToNode is true, then it will be false by default.
@@ -4925,11 +5232,11 @@ declare namespace Highcharts {
          * @default '#333333'
          * @since 3.0
          */
-        lineColor?: string | Gradient;
+        lineColor?: Color;
         /**
          * The color used specifically for positive point columns. When not specified, the general series color is used.
          */
-        upColor?: string;
+        upColor?: Color;
     }
 
     /**
@@ -4978,6 +5285,20 @@ declare namespace Highcharts {
          */
         color?: string | Gradient;
         /**
+         * Styled mode only. A specific color index to use for the point, so its graphic representations are given the class name highcharts-color-{n}.
+         * @since 5.0.0
+         */
+        colorIndex?: number;
+        /**
+         * When true, each column edge is rounded to its nearest pixel in order to render sharp on screen.
+         * In some cases, when there are a lot of densely packed columns, this leads to visible difference
+         * in column widths or distance between columns. In these cases, setting crisp to false may look
+         * better, even though each column is rendered blurry.
+         * @default true
+         * @since 5.0.10
+         */
+        crisp?: boolean;
+        /**
          * You can set the cursor to "pointer" if you have click events attached to the series, to signal to the user
          *     that the points and lines can be clicked.
          */
@@ -5012,7 +5333,14 @@ declare namespace Highcharts {
          *            color: '#FF00FF'
          *        }]
          */
-        data?: number[] | [number, number][] | [string, number][] | DataPoint[];
+        data?: Array<number | [number, number] | [string, number] | DataPoint>;
+        /**
+         * A description of the series to add to the screen reader information about the series.
+         * @since 5.0.0
+         * @default undefined
+         */
+        description?: string;
+
         /**
          * An id for the series. This can be used after render time to get a pointer to the series object through
          * chart.get().
@@ -5043,6 +5371,10 @@ declare namespace Highcharts {
          * @since 2.1
          */
         stack?: any;
+        /**
+         * The series' visibility state as set by series.show(), series.hide(), or the initial configuration.
+         */
+        visible?: boolean;
         /**
          * When using dual or multiple x axes, this number defines which xAxis the particular series is connected to. It
          * refers to either the axis id or the index of the axis in the xAxis array, with 0 being the first.
@@ -5315,10 +5647,33 @@ declare namespace Highcharts {
     }
 
     interface CrosshairObject {
+        /**
+         * A class name for the crosshair, especially as a hook for styling.
+         * @since 5.0.0
+         */
+        className?: string;
+        /**
+         * The color of the crosshair. Defaults to #cccccc for numeric and datetime axes, and rgba(204,214,235,0.25) for category axes,
+         * where the crosshair by default highlights the whole category.
+         * @since 4.1
+         */
         color?: string | Gradient;
-        width?: number;
+        /**
+         * The dash style for the crosshair. See series.dashStyle for possible values. Defaults to Solid.
+         * @since 4.1
+         */
         dashStyle?: string; // Solid ShortDash ShortDot ShortDashDot ShortDashDotDot Dot Dash LongDash DashDot LongDashDot LongDashDotDot
+        /**
+         * The Z index of the crosshair. Higher Z indices allow drawing the crosshair on top of the series or behind the grid lines.
+         * @since 4.1
+         * @default 2
+         */
         zIndex?: number;
+        /**
+         * The pixel width of the crosshair. Defaults to 1 for numeric or datetime axes, and for one category width for category axes.
+         * @since 4.1
+         */
+        width?: number;
     }
 
     interface PlotPoint {
@@ -5404,7 +5759,13 @@ declare namespace Highcharts {
          * this.y (not shared) / this.points[i].y (shared)
          *   The y value.
          */
-        formatter?: () => boolean | string;
+        formatter?(): boolean | string;
+        /**
+         * Padding inside the tooltip, in pixels.
+         * @since 5.0.0
+         * @default 8
+         */
+        padding?: number;
         /**
          * A callback function to place the tooltip in a default position. The callback receives three parameters:
          * labelWidth, labelHeight and point, where point contains values for plotX and plotY telling where the reference
@@ -5413,7 +5774,7 @@ declare namespace Highcharts {
          * The return should be an object containing x and y values, for example { x: 100, y: 100 }.
          * @since 2.2.4
          */
-        positioner?: (labelWidth: number, labelHeight: number, point: PlotPoint) => { x: number; y: number; };
+        positioner?(labelWidth: number, labelHeight: number, point: PlotPoint): { x: number; y: number; };
         /**
          * Whether to apply a drop shadow to the tooltip.
          * @default true
@@ -5441,6 +5802,14 @@ declare namespace Highcharts {
          * @since 1.2.0
          */
         snap?: number;
+        /**
+         * Split the tooltip into one label per series, with the header close to the axis.
+         * This is recommended over shared tooltips for charts with multiple line series,
+         * generally making them easier to read.
+         * @since 5.0.0
+         * @default false
+         */
+        split?: boolean;
         /**
          * CSS styles for the tooltip. The tooltip can also be styled through the CSS class .highcharts-tooltip
          * @default { color: '#333333', fontSize: '12px', padding: '8px' }
@@ -5516,7 +5885,7 @@ declare namespace Highcharts {
          * The this keyword refers to the Point object.
          * @since 4.1.0
          */
-        pointFormatter?: () => string;
+        pointFormatter?(): string;
         /**
          * How many decimals to show in each series' y value. This is overridable in each series' tooltip options object.
          * The default is to preserve all decimals.
@@ -5542,6 +5911,12 @@ declare namespace Highcharts {
 
     interface Options {
         /**
+         * Options for configuring accessibility for the chart. Requires the accessibility module to be loaded.
+         * For a description of the module and information on its features, see Highcharts Accessibility.
+         * @since 5.0.0
+         */
+        accessibility?: AccessibilityOptions;
+        /**
          * Options regarding the chart area and plot area as well as general chart options.
          */
         chart?: ChartOptions;
@@ -5554,7 +5929,7 @@ declare namespace Highcharts {
          *
          * @default ['#7cb5ec', '#434348', '#90ed7d', '#f7a35c', '#8085e9', '#f15c80', '#e4d354', '#2b908f', '#f45b5b', '#91e8e1']
          */
-        colors?: string[];
+        colors?: Color[];
         /**
          * Highchart by default puts a credits label in the lower right corner of the chart. This can be changed using these options.
          */
@@ -5569,6 +5944,11 @@ declare namespace Highcharts {
          * series.data option.
          */
         data?: DataOptions;
+        /**
+         * Styled mode only. Configuration object for adding SVG definitions for reusable elements.
+         * See gradients, shadows and patterns for more information and code examples.
+         */
+        defs?: any; // TODO: Unknown API interface, see also http://api.highcharts.com/highcharts/defs
         /**
          * Options for drill down, the concept of inspecting increasingly high resolution data through clicking on chart
          * items like columns or pie slices.
@@ -5620,6 +6000,11 @@ declare namespace Highcharts {
          * that type, for example plotOptions.line. Next, options for one single series are given in the series array.
          */
         plotOptions?: PlotOptions;
+        /**
+         * Allows setting a set of rules to apply for different screen or chart sizes. Each rule specifies additional chart options.
+         * @since 5.0.0
+         */
+        responsive?: ResponsiveOptions[];
         /**
          * The actual series to append to the chart. In addition to the members listed below, any member of the plotOptions
          * for that specific type of plot can be added to a series individually. For example, even though a general
@@ -5798,6 +6183,12 @@ declare namespace Highcharts {
          */
         addAxis(options: AxisOptions, isX?: boolean, redraw?: boolean, animation?: boolean | Animation): AxisObject;
         /**
+         * Set a new credits label for the chart.
+         * @param A configuration object for the credits as defined at credits.
+         * @since 5.0.0
+         */
+        addCredits(options: CreditsOptions): void;
+        /**
          * Add a series to the chart after render time. Note that this method should never be used when adding data
          * synchronously at chart render time, as it adds expense to the calculations and rendering. When adding data at the
          * same time as the chart is initiated, add the series as a configuration option instead.
@@ -5820,6 +6211,11 @@ declare namespace Highcharts {
          * @since 1.2.5
          */
         container: HTMLElement;
+        /**
+         * The chart's credits label. The label has an update method that allows setting new options as per the credits option set.
+         *
+         */
+        credits: CreditsObject;
         /**
          * Removes the chart and purges memory. This method should be called before writing a new chart into the same
          * container. It is called internally on window unload to prevent leaks.
@@ -5973,6 +6369,16 @@ declare namespace Highcharts {
          */
         showLoading(str?: string): void;
         /**
+         * The chart subtitle. The subtitle has an update method that allows modifying the options.
+         * @since 5.0.0
+         */
+        subtitle: TitleObject;
+        /**
+         * The chart title. The title has an update method that points back to Chart.setTitle.
+         * @since 5.0.0
+         */
+        title: TitleObject;
+        /**
          * A generic function to update any element of the chart. Elements can be enabled and disabled, moved, re-styled,
          * re-formatted etc.
          * A special case is configuration objects that take arrays, for example xAxis, yAxis or series. For these collections,
@@ -5980,11 +6386,11 @@ declare namespace Highcharts {
          * found, the first item is updated. So for example, running chart.update with a series item without an id, will cause
          * the existing chart's first series to be updated.
          * See also the responsive option set. Switching between responsive.rules basically runs chart.update under the hood.
-         * @param {ChartOptions} option A configuration object for the new chart options as defined in the options section of the API.
+         * @param {Options} option A configuration object for the new chart options as defined in the options section of the API.
          * @param [boolean] redraw Whether to redraw the chart. Defaults to true.
          * @since 5.0.0
          */
-        update(options: ChartOptions, redraw?: boolean): void;
+        update(options: Options, redraw?: boolean): void;
         /**
          * This method is deprecated as of 2.0.1. Updating the chart position after a move operation is no longer necessary.
          * @since 1.2.5
@@ -6150,6 +6556,14 @@ declare namespace Highcharts {
          */
         circle(centerX: number, centerY: number, radius: number): ElementObject;
         /**
+         * Styled mode only. A hook for adding general definitions to the SVG's defs tag. Definitions can be referenced from
+         * the CSS by its id. Read more in Gradients, shadows and patterns.
+         * The definitions can also be added as configuration options, see defs.
+         * @param {def} A serialized form of an SVG definition, including children.
+         * @since 5.0.0
+         */
+        definition(def: object): ElementObject;
+        /**
          * Add an SVG/VML group.
          * @param [string] name The name of the group. This will be used in the class name, which will be 'highcharts-'+ name.
          * Other Element objects are added to the group by using the group as the first parameter in .add() for the wrappers
@@ -6259,6 +6673,15 @@ declare namespace Highcharts {
          */
         dateFormats: DateFormatSpecifiers;
         /**
+         * The error handler function. By default is provides error messages for debugging, with links to the descriptions on Highcharts website.
+         * This function can be redefined to catch errors in client applications.
+         * @param {code} Number|String The error code. If this is a number, the default error function prints a link to a human readable error code
+         * description according to error definition file. If it's a string, the description is printed in the console.
+         * @param {fatal} Whether the error should stop execution.
+         * @since 5.0.6
+         */
+        error(code: number | string, fatal: boolean): Function;
+        /**
          * Formats a JavaScript number with grouped thousands, a fixed amount of decimals and an optional decimal point. It
          * is a port of PHP's function with the same name. See PHP number_format for a full explanation of the parameters.
          * @param  {number} value        The raw number to format.
@@ -6282,6 +6705,8 @@ declare namespace Highcharts {
         getOptions(): Options;
 
         map(array: any[], fn: Function): any[];
+
+        wrap(prototype: any, type: string, cb: (proceed: Function, ...args: any[]) => void): void;
     }
 
     /**
@@ -6529,23 +6954,23 @@ declare global {
     interface JQuery {
         highcharts(): Highcharts.ChartObject;
         /**
-        * Creates a new Highcharts.Chart for the current JQuery selector; usually
-        * a div selected by $('#container')
-        * @param {Options} options Options for this chart
-        * @return current {JQuery} selector the current JQuery selector
-        **/
+         * Creates a new Highcharts.Chart for the current JQuery selector; usually
+         * a div selected by $('#container')
+         * @param {Options} options Options for this chart
+         * @return current {JQuery} selector the current JQuery selector
+         */
         highcharts(options: Highcharts.Options): JQuery;
         /**
-        * Creates a new Highcharts.Chart for the current JQuery selector; usually
-        * a div selected by $('#container')
-        * @param {Options} options Options for this chart
-        * @param callback Callback function used to manipulate the constructed chart instance
-        * @return current {JQuery} selector the current JQuery selector
-        **/
+         * Creates a new Highcharts.Chart for the current JQuery selector; usually
+         * a div selected by $('#container')
+         * @param {Options} options Options for this chart
+         * @param callback Callback function used to manipulate the constructed chart instance
+         * @return current {JQuery} selector the current JQuery selector
+         */
         highcharts(options: Highcharts.Options, callback: (chart: Highcharts.ChartObject) => void): JQuery;
     }
 }
 
-declare var Highcharts: Highcharts.Static;
+declare const Highcharts: Highcharts.Static;
 export = Highcharts;
 export as namespace Highcharts;

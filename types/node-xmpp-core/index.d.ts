@@ -4,8 +4,8 @@
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 // TypeScript Version: 2.1
 /// <reference types="node" />
-import {Element} from 'ltx';
-import {EventEmitter} from 'events';
+import { Element } from 'ltx';
+import { EventEmitter } from 'events';
 
 // fixme: not ideal
 export {createElement, Element, escapeXML, escapeXMLText} from 'ltx';
@@ -66,17 +66,17 @@ export class JID {
 
     /**
      * Convenience method to distinguish users
-     **/
+     */
     bare(): JID;
 
     /**
      * Comparison function
-     **/
+     */
     equals(other: JID): boolean;
 
     /**
      * http://xmpp.org/rfcs/rfc6122.html#addressing-localpart
-     **/
+     */
     setLocal(local: string, escape?: any): void;
 
     getLocal(unescape?: any): string;

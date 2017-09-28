@@ -1,4 +1,3 @@
-
 import * as ReduxAction from 'redux-action';
 import * as ReduxThunk from 'redux-thunk';
 import * as Redux from 'redux';
@@ -77,7 +76,7 @@ interface State {
 }
 const reducer = ReduxAction.createReducer<State>({ name: 'name' }, {
   'get items': () => {
-    return 'new name';
+    return { name: 'new name' };
   }
 });
 

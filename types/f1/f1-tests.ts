@@ -1,5 +1,5 @@
 import F1 = require("f1");
-var ui = F1();
+const ui = F1();
 
 ui.states({
     out: {
@@ -23,9 +23,7 @@ ui.states({
     }
 });
 
-
-
-ui.transitions( [
+ui.transitions([
   { from: 'idle', to: 'rollOver', animation: { duration: 0.25 } },
   { from: 'rollOver', to: 'idle', animation: { duration: 0.1 } }
 ]);

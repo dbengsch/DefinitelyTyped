@@ -1,6 +1,6 @@
 /// <reference types="mocha"" />
 
-import {Expectation, Extension, Spy, createSpy, isSpy, assert, spyOn, extend, restoreSpies} from 'expect';
+import { Expectation, Extension, Spy, createSpy, isSpy, assert, spyOn, extend, restoreSpies } from 'expect';
 import * as expect from 'expect';
 
 describe('chaining assertions', () => {
@@ -32,7 +32,8 @@ describe('createSpy', () => {
 });
 
 describe('A spy', () => {
-  let targetContext: any, targetArguments: any;
+  let targetContext: any;
+  let targetArguments: any;
   const target = {
     method() {
       targetContext = this;
@@ -88,7 +89,8 @@ describe('A spy', () => {
   });
 
   describe('that calls some other function', () => {
-    let otherContext: any, otherArguments: any;
+    let otherContext: any;
+    let otherArguments: any;
     function otherFn() {
       otherContext = this;
       otherArguments = Array.prototype.slice.call(arguments, 0);

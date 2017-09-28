@@ -1,8 +1,11 @@
-// Type definitions for react-paginate 4.2
+// Type definitions for react-paginate 4.3
 // Project: https://github.com/AdeleD/react-paginate
-// Definitions by: Simon Hartcher <https://github.com/deevus>, Wouter Hardeman <https://github.com/wouterhardeman>, pegel03 <https://github.com/pegel03>
+// Definitions by: Simon Hartcher <https://github.com/deevus>
+//                 Wouter Hardeman <https://github.com/wouterhardeman>
+//                 pegel03 <https://github.com/pegel03>
+//                 Simon Archer <https://github.com/archy-bold>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
 import * as React from 'react';
 
@@ -45,7 +48,7 @@ interface ReactPaginateProps {
     /**
      * The method to call when a page is clicked. Exposes the current page object as an argument.
      */
-    onPageChange?: (selectedItem: {selected: number}) => void;
+    onPageChange?(selectedItem: {selected: number}): void;
 
     /**
      * The initial page selected.
@@ -110,7 +113,12 @@ interface ReactPaginateProps {
     /**
      * The method is called to generate the href attribute value on tag a of each page element.
      */
-    hrefBuilder?: (pageIndex: number) => void;
+    hrefBuilder?(pageIndex: number): void;
+
+    /**
+     * Extra context to add to the aria-label HTML attribute.
+     */
+    extraAriaContext?: string;
 }
 
 declare const ReactPaginate: React.ComponentClass<ReactPaginateProps>;

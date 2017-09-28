@@ -1,10 +1,10 @@
 // Test adapted from the ReactDnD chess game tutorial:
 // http://gaearon.github.io/react-dnd/docs-tutorial.html
 
-import React = require("react");
-import ReactDnd = require("react-dnd");
+import * as React from "react";
+import * as ReactDnd from "react-dnd";
 
-var r = React.DOM;
+const r = React.DOM;
 
 import DragSource = ReactDnd.DragSource;
 import DropTarget = ReactDnd.DropTarget;
@@ -15,8 +15,8 @@ import HTML5Backend, { getEmptyImage } from 'react-dnd-html5-backend';
 // ----------------------------------------------------------------------
 
 namespace Game {
-    var knightPosition = [0, 0];
-    var observer: any = null;
+    let knightPosition = [0, 0];
+    let observer: any = null;
 
     function emitChange() {
         observer(knightPosition);
@@ -47,7 +47,7 @@ namespace Game {
     }
 }
 
-var ItemTypes = {
+const ItemTypes = {
     KNIGHT: "knight"
 };
 
@@ -61,7 +61,7 @@ namespace Knight {
         isDragging: boolean;
     }
 
-    var knightSource: ReactDnd.DragSourceSpec<KnightP> = {
+    const knightSource: ReactDnd.DragSourceSpec<KnightP> = {
         beginDrag: (props) => {
             return {};
         }
@@ -75,13 +75,13 @@ namespace Knight {
         };
     }
 
-    export class Knight extends React.Component<KnightP, {}> {
+    export class Knight extends React.Component<KnightP> {
         static defaultProps: KnightP;
 
         static create = React.createFactory(Knight);
 
         componentDidMount() {
-            var img = getEmptyImage();
+            const img = getEmptyImage();
             img.onload = () => this.props.connectDragPreview(img);
         }
 
@@ -99,8 +99,8 @@ namespace Knight {
         }
     }
 
-    export var DndKnight = DragSource(ItemTypes.KNIGHT, knightSource, knightCollect)(Knight);
-    export var create = React.createFactory(DndKnight);
+    export const DndKnight = DragSource(ItemTypes.KNIGHT, knightSource, knightCollect)(Knight);
+    export const create = React.createFactory(DndKnight);
 }
 
 // Square Component
@@ -111,9 +111,9 @@ namespace Square {
         black: boolean;
     }
 
-    export class Square extends React.Component<SquareP, {}> {
+    export class Square extends React.Component<SquareP> {
         render() {
-            var fill = this.props.black ? 'black' : 'white';
+            const fill = this.props.black ? 'black' : 'white';
             return r.div({
                 style: {
                     backgroundColor: fill
@@ -122,7 +122,7 @@ namespace Square {
         }
     }
 
-    export var create = React.createFactory(Square);
+    export const create = React.createFactory(Square);
 }
 
 // BoardSquare Component
@@ -137,7 +137,7 @@ namespace BoardSquare {
         canDrop?: boolean;
     }
 
-    var boardSquareTarget: ReactDnd.DropTargetSpec<BoardSquareP> = {
+    const boardSquareTarget: ReactDnd.DropTargetSpec<BoardSquareP> = {
         canDrop: (props) => Game.canMoveKnight(props.x, props.y),
         drop: (props) => Game.moveKnight(props.x, props.y)
     };
@@ -150,7 +150,7 @@ namespace BoardSquare {
         };
     }
 
-    export class BoardSquare extends React.Component<BoardSquareP, {}> {
+    export class BoardSquare extends React.Component<BoardSquareP> {
         static defaultProps: BoardSquareP;
 
         private _renderOverlay = (color: string) => {
@@ -169,9 +169,9 @@ namespace BoardSquare {
         }
 
         render() {
-            var black = (this.props.x + this.props.y) % 2 === 1;
-            var isOver = this.props.isOver;
-            var canDrop = this.props.canDrop;
+            const black = (this.props.x + this.props.y) % 2 === 1;
+            const isOver = this.props.isOver;
+            const canDrop = this.props.canDrop;
 
             return this.props.connectDropTarget(
                     r.div({
@@ -191,8 +191,8 @@ namespace BoardSquare {
         }
     }
 
-    export var DndBoardSquare = DropTarget(ItemTypes.KNIGHT, boardSquareTarget, boardSquareCollect)(BoardSquare);
-    export var create = React.createFactory(DndBoardSquare);
+    export const DndBoardSquare = DropTarget(ItemTypes.KNIGHT, boardSquareTarget, boardSquareCollect)(BoardSquare);
+    export const create = React.createFactory(DndBoardSquare);
 }
 
 // Custom Drag Layer Component
@@ -210,15 +210,15 @@ namespace CustomDragLayer {
         };
     }
 
-    export class CustomDragLayer extends React.Component<CustomDragLayerP, {}> {
+    export class CustomDragLayer extends React.Component<CustomDragLayerP> {
         render() {
             return r.div(null, this.props.isDragging ? this.props.item : null);
         }
     }
 
-    export var dragLayer = DragLayer(dragLayerCollect)(CustomDragLayer);
+    export const dragLayer = DragLayer(dragLayerCollect)(CustomDragLayer);
 
-    export var create = React.createFactory(dragLayer);
+    export const create = React.createFactory(dragLayer);
 }
 
 // Board Component
@@ -229,18 +229,18 @@ namespace Board {
         knightPosition: number[];
     }
 
-    export class Board extends React.Component<BoardP, {}> {
+    export class Board extends React.Component<BoardP> {
         private _renderPiece = (x: number, y: number) => {
-            var knightX = this.props.knightPosition[0];
-            var knightY = this.props.knightPosition[1];
+            const knightX = this.props.knightPosition[0];
+            const knightY = this.props.knightPosition[1];
             return x === knightX && y === knightY ?
                     Knight.create() :
                     null;
         }
 
         private _renderSquare = (i: number) => {
-            var x = i % 8;
-            var y = Math.floor(i / 8);
+            const x = i % 8;
+            const y = Math.floor(i / 8);
 
             return r.div({
                 key: i,
@@ -252,7 +252,7 @@ namespace Board {
         }
 
         render() {
-            var squares: Array<React.ReactHTMLElement<HTMLDivElement>> = [];
+            const squares: Array<React.ReactHTMLElement<HTMLDivElement>> = [];
             for (let i = 0; i < 64; i++) {
                 squares.push(this._renderSquare(i));
             }
@@ -274,7 +274,7 @@ namespace Board {
         }
     }
 
-    export var createWithHTMLBackend = React.createFactory(DragDropContext(HTML5Backend)(Board));
+    export const createWithHTMLBackend = React.createFactory(DragDropContext(HTML5Backend)(Board));
 }
 
 // Render the Board Component

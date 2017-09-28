@@ -1,7 +1,7 @@
 // promise api tests
 import amqp = require('amqplib');
 
-var msg = 'Hello World';
+const msg = 'Hello World';
 
 // test promise api
 amqp.connect('amqp://localhost')
@@ -16,16 +16,21 @@ amqp.connect('amqp://localhost')
     .then(connection => {
         return connection.createChannel()
             .tap(channel => channel.checkQueue('myQueue'))
-            .then(channel => channel.consume('myQueue', newMsg => console.log('New Message: ' + newMsg.content.toString())))
+            .then(channel => {
+                return channel.consume('myQueue', newMsg => {
+                    if (newMsg != null) {
+                        // test promise api properties
+                        if (newMsg.properties.contentType === 'application/json') {
+                            console.log('New Message: ' + newMsg.content.toString());
+                        }
+                    }
+                });
+            })
             .finally(() => connection.close());
     });
 
-// test promise api properties
-var amqpMessage: amqp.Message;
-amqpMessage.properties.contentType = 'application/json';
-var amqpAssertExchangeOptions: amqp.Options.AssertExchange;
-var anqpAssertExchangeReplies: amqp.Replies.AssertExchange;
-
+let amqpAssertExchangeOptions: amqp.Options.AssertExchange;
+let anqpAssertExchangeReplies: amqp.Replies.AssertExchange;
 
 // callback api tests
 import amqpcb = require('amqplib/callback_api');
@@ -50,7 +55,14 @@ amqpcb.connect('amqp://localhost', (err, connection) => {
           if (!err) {
               channel.assertQueue('myQueue', {}, (err, ok) => {
                   if (!err) {
-                      channel.consume('myQueue', newMsg => console.log('New Message: ' + newMsg.content.toString()));
+                      channel.consume('myQueue', newMsg => {
+                          if (newMsg != null) {
+                              // test callback api properties
+                              if (newMsg.properties.contentType === 'application/json') {
+                                  console.log('New Message: ' + newMsg.content.toString());
+                              }
+                          }
+                      });
                   }
               });
           }
@@ -58,8 +70,5 @@ amqpcb.connect('amqp://localhost', (err, connection) => {
     }
 });
 
-// test callback api properties
-var amqpcbMessage: amqpcb.Message;
-amqpcbMessage.properties.contentType = 'application/json';
-var amqpcbAssertExchangeOptions: amqpcb.Options.AssertExchange;
-var anqpcbAssertExchangeReplies: amqpcb.Replies.AssertExchange;
+let amqpcbAssertExchangeOptions: amqpcb.Options.AssertExchange;
+let anqpcbAssertExchangeReplies: amqpcb.Replies.AssertExchange;

@@ -61,32 +61,38 @@ angular.module('http-auth-interceptor', [])
  * $http interceptor.
  * On 401 response - it stores the request and broadcasts 'event:angular-auth-loginRequired'.
  */
-    .config(['$httpProvider', 'authServiceProvider', ($httpProvider: ng.IHttpProvider, authServiceProvider: any) => {
+    .config([
+        '$httpProvider', 'authServiceProvider',
+        ($httpProvider: ng.IHttpProvider, authServiceProvider: AuthService) => {
+            $httpProvider.defaults.headers.common = { Authorization: 'Bearer token' };
+            $httpProvider.defaults.headers.get.Authorization = 'Bearer token';
+            $httpProvider.defaults.headers.post['Authorization'] = (config: ng.IRequestConfig) =>
+                'Bearer token';
 
-        $httpProvider.defaults.headers.common = {Authorization: 'Bearer token'};
-        $httpProvider.defaults.headers.get['Authorization'] = 'Bearer token';
-        $httpProvider.defaults.headers.post['Authorization'] = (config: ng.IRequestConfig) => 'Bearer token';
-
-        const interceptor = ['$rootScope', '$q', ($rootScope: ng.IScope, $q: ng.IQService) => {
-            function success(response: ng.IHttpPromiseCallbackArg<any>) {
-                return response;
-            }
-
-            function error(response: ng.IHttpPromiseCallbackArg<any>) {
-                if (response.status === 401) {
-                    const deferred = $q.defer<void>();
-                    authServiceProvider.pushToBuffer(response.config, deferred);
-                    $rootScope.$broadcast('event:auth-loginRequired');
-                    return deferred.promise;
+            const interceptor = [
+                '$rootScope', '$q',
+                ($rootScope: ng.IScope, $q: ng.IQService) => {
+                    return {
+                        request(config: ng.IRequestConfig) {
+                            if (!config.params) config.params = {};
+                            config.params.rnd = Math.random();
+                            return config;
+                        },
+                        responseError(rejection: any) {
+                            if (rejection.status === 401) {
+                                const deferred = $q.defer<ng.IHttpResponse<any>>();
+                                authServiceProvider.pushToBuffer(rejection.config, deferred);
+                                $rootScope.$broadcast('event:auth-loginRequired');
+                                return deferred.promise;
+                            }
+                            return $q.reject(rejection);
+                        }
+                    };
                 }
-                // otherwise
-                return $q.reject(response);
-            }
-
-            return (promise: ng.IHttpPromise<any>) => promise.then(success, error);
-        }];
-        $httpProvider.interceptors.push(interceptor);
-    }]);
+            ];
+            $httpProvider.interceptors.push(interceptor);
+        }
+    ]);
 
 namespace HttpAndRegularPromiseTests {
     interface Person {
@@ -106,17 +112,17 @@ namespace HttpAndRegularPromiseTests {
 
     function someController($scope: SomeControllerScope, $http: ng.IHttpService, $q: ng.IQService) {
         $http.get<ExpectedResponse>('http://somewhere/some/resource')
-            .then((response: ng.IHttpPromiseCallbackArg<ExpectedResponse>) => {
+            .then((response: ng.IHttpResponse<ExpectedResponse>) => {
                 // typing lost, so something like
-                // var i: number = response.data
+                // const i: number = response.data
                 // would type check
                 $scope.person = response.data;
             });
 
         $http.get<ExpectedResponse>('http://somewhere/some/resource')
-            .then((response: ng.IHttpPromiseCallbackArg<ExpectedResponse>) => {
+            .then((response: ng.IHttpResponse<ExpectedResponse>) => {
                 // typing lost, so something like
-                // var i: number = response.data
+                // const i: number = response.data
                 // would NOT type check
                 $scope.person = response.data;
             });
@@ -153,7 +159,13 @@ namespace HttpAndRegularPromiseTests {
 // Test for AngularJS Syntax
 
 namespace My.Namespace {
-    export var x: any; // need to export something for module to kick in
+    export const x: any = null; // need to export something for module to kick in
+}
+
+class TestProvider implements ng.IServiceProvider {
+    constructor(private $scope: ng.IScope) {}
+
+    $get() {}
 }
 
 // IModule Registering Test
@@ -173,7 +185,7 @@ mod.controller({
 mod.directive('myDirectiveA', ($rootScope: ng.IRootScopeService) => {
     return (scope, el, attrs) => {
         let foo = 'none';
-        el.click(e => {
+        el.on('click', e => {
             foo = e.type;
             $rootScope.$apply();
         });
@@ -183,8 +195,9 @@ mod.directive('myDirectiveA', ($rootScope: ng.IRootScopeService) => {
 mod.directive('myDirectiveB', ['$rootScope', ($rootScope: ng.IRootScopeService) => {
     return {
         link(scope, el, attrs) {
-            el.click(e => {
-                el.hide();
+            el.on('click', e => {
+                // Doesn't exist on jqLite
+                // el.hide();
             });
         }
     };
@@ -229,14 +242,6 @@ mod.value(My.Namespace);
 mod.decorator('name', ($scope: ng.IScope) => {});
 mod.decorator('name', ['$scope', ($scope: ng.IScope) => {}]);
 
-class TestProvider implements ng.IServiceProvider {
-    constructor(private $scope: ng.IScope) {
-    }
-
-    $get() {
-    }
-}
-
 // QProvider tests
 angular.module('qprovider-test', [])
     .config(['$qProvider', ($qProvider: ng.IQProvider) => {
@@ -276,8 +281,8 @@ foo.then((x) => {
     // Object is inferred here
     x.a = 123;
     // Try a promise
-    var y: ng.IPromise<number>;
-    var condition: boolean;
+    const y: ng.IPromise<number> = null;
+    const condition: boolean = null;
     return condition ? y : x.a; // IPromise<T> | T, both are good for the 1st arg of .then()
 }).then((x) => {
     // x is infered to be a number, which is the resolved value of a promise
@@ -299,15 +304,15 @@ namespace TestQ {
         g: string;
         h: number;
     }
-    var tResult: TResult;
-    var promiseTResult: angular.IPromise<TResult>;
-    var tValue: TValue;
-    var promiseTValue: angular.IPromise<TValue>;
-    var tOther: TOther;
-    var promiseTOther: angular.IPromise<TOther>;
+    const tResult: TResult = null;
+    const promiseTResult: angular.IPromise<TResult> = null;
+    const tValue: TValue = null;
+    const promiseTValue: angular.IPromise<TValue> = null;
+    const tOther: TOther = null;
+    const promiseTOther: angular.IPromise<TOther> = null;
 
-    var $q: angular.IQService;
-    var promiseAny: angular.IPromise<any>;
+    const $q: angular.IQService = null;
+    const promiseAny: angular.IPromise<any> = null;
 
     const assertPromiseType = <T>(arg: angular.IPromise<T>) => arg;
 
@@ -340,13 +345,23 @@ namespace TestQ {
         let result: angular.IPromise<{a: number; b: string; }>;
         result = $q.all<{a: number; b: string; }>({a: promiseAny, b: promiseAny});
     }
+    {
+        const result = $q.all({ num: $q.when(2), str: $q.when('test') });
+        // TS should infer that num is a number and str is a string
+        result.then(r => (r.num * 2) + r.str.indexOf('s'));
+    }
+    {
+        const result = $q.all({ num: $q.when(2), str: 'test' });
+        // TS should infer that num is a number and str is a string
+        result.then(r => (r.num * 2) + r.str.indexOf('s'));
+    }
 
     // $q.defer
     {
         let result: angular.IDeferred<TResult>;
         result = $q.defer<TResult>();
         result.resolve(tResult);
-        var anyValue: any;
+        const anyValue: any = null;
         result.reject(anyValue);
         result.promise.then(result => {
             return $q.resolve<TResult>(result);
@@ -370,8 +385,7 @@ namespace TestQ {
         let result: angular.IPromise<TResult>;
         result = $q.resolve<TResult>(tResult);
         result = $q.resolve<TResult>(promiseTResult);
-        result = $q.resolve<TResult | TOther>(Math.random() > 0.5 ? tResult : promiseTOther);
-        result = $q.resolve(Math.random() > 0.5 ? tResult : promiseTOther);
+        const result2: angular.IPromise<TResult | TOther> = $q.resolve<TResult | TOther>(Math.random() > 0.5 ? tResult : promiseTOther);
     }
 
     // $q.when
@@ -381,7 +395,7 @@ namespace TestQ {
     }
     {
         let result: angular.IPromise<TResult>;
-        let resultOther: angular.IPromise<TOther>;
+        let resultOther: angular.IPromise<TResult | TOther>;
 
         result = $q.when<TResult>(tResult);
         result = $q.when<TResult>(promiseTResult);
@@ -391,34 +405,35 @@ namespace TestQ {
         result = $q.when<TResult, TValue>(tValue, (result: TValue) => tResult, (any) => any, (any) => any);
 
         result = $q.when<TResult, TValue>(promiseTValue, (result: TValue) => tResult);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => tOther);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => tOther, (any) => any);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => promiseTOther);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => promiseTOther, (any) => any);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => tOther);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => tOther);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => tOther, (any) => any);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => promiseTOther);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => tResult, (any) => promiseTOther, (any) => any);
 
         result = $q.when<TResult, TValue>(tValue, (result: TValue) => promiseTResult);
         result = $q.when<TResult, TValue>(tValue, (result: TValue) => promiseTResult, (any) => any);
         result = $q.when<TResult, TValue>(tValue, (result: TValue) => promiseTResult, (any) => any, (any) => any);
 
         result = $q.when<TResult, TValue>(promiseTValue, (result: TValue) => promiseTResult);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => tOther);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => tOther, (any) => any);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => promiseTOther);
-        result = resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => promiseTOther, (any) => any);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => tOther);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => tOther, (any) => any);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => promiseTOther);
+        resultOther = $q.when<TResult, TOther, TValue>(promiseTValue, (result: TValue) => promiseTResult, (any) => promiseTOther, (any) => any);
     }
 }
 
 let httpFoo: ng.IHttpPromise<number>;
 httpFoo.then((x) => {
     // When returning a promise the generic type must be inferred.
-    var innerPromise: ng.IPromise<number>;
+    const innerPromise: ng.IPromise<number> = null;
     return innerPromise;
 }).then((x) => {
     // must still be number.
     x.toFixed();
 });
 
-httpFoo.then((response: ng.IHttpPromiseCallbackArg<any>) => {
+httpFoo.then((response: ng.IHttpResponse<any>) => {
     const h = response.headers('test');
     h.charAt(0);
     const hs = response.headers();
@@ -427,22 +442,22 @@ httpFoo.then((response: ng.IHttpPromiseCallbackArg<any>) => {
 
 // Deferred signature tests
 namespace TestDeferred {
-    var any: any;
+    const any: any = null;
 
     interface TResult {
         a: number;
         b: string;
         c: boolean;
     }
-    var tResult: TResult;
+    const tResult: TResult = null;
 
-    var deferred: angular.IDeferred<TResult>;
+    const deferred: angular.IDeferred<TResult> = null;
 
     // deferred.resolve
     {
         let result: void;
-        result = deferred.resolve() as void;
-        result = deferred.resolve(tResult) as void;
+        result = deferred.resolve();
+        result = deferred.resolve(tResult);
     }
 
     // deferred.reject
@@ -467,17 +482,40 @@ namespace TestDeferred {
 }
 
 namespace TestInjector {
-    var $injector: angular.auto.IInjectorService;
+    const $injector: angular.auto.IInjectorService = null;
 
     $injector.strictDi = true;
 
     $injector.annotate(() => {});
     $injector.annotate(() => {}, true);
+
+    // $injector.instantiate
+    {
+        class Foobar {
+            constructor($q) {}
+        }
+        const result: Foobar = $injector.instantiate(Foobar);
+    }
+
+    // $injector.invoke
+    {
+        function foobar(v: boolean): number {
+            return 7;
+        }
+        const result = $injector.invoke(foobar);
+        if (!(typeof result === 'number')) {
+            // This fails to compile if 'result' is not exactly a number.
+            const expectNever: never = result;
+        }
+
+        const anyFunction: Function = foobar;
+        const anyResult: string = $injector.invoke(anyFunction);
+    }
 }
 
 // Promise signature tests
 namespace TestPromise {
-    var any: any;
+    const any: any = null;
 
     interface TResult {
         kind: 'result';
@@ -497,16 +535,16 @@ namespace TestPromise {
         return x.kind === 'result';
     }
 
-    var tresult: TResult;
-    var tresultPromise: ng.IPromise<TResult>;
-    var tresultHttpPromise: ng.IHttpPromise<TResult>;
+    const tresult: TResult = null;
+    const tresultPromise: ng.IPromise<TResult> = null;
+    const tresultHttpPromise: ng.IHttpPromise<TResult> = null;
 
-    var tother: TOther;
-    var totherPromise: ng.IPromise<TOther>;
-    var totherHttpPromise: ng.IHttpPromise<TOther>;
+    const tother: TOther = null;
+    const totherPromise: ng.IPromise<TOther> = null;
+    const totherHttpPromise: ng.IHttpPromise<TOther> = null;
 
-    var promise: angular.IPromise<TResult>;
-    var $q: angular.IQService;
+    const promise: angular.IPromise<TResult> = null;
+    const $q: angular.IQService = null;
 
     const assertPromiseType = <T>(arg: angular.IPromise<T>) => arg;
     const reject = $q.reject();
@@ -527,17 +565,17 @@ namespace TestPromise {
     assertPromiseType<TResult>(promise.then((result) => result, (any) => any, (any) => any));
     assertPromiseType<TResult>(promise.then((result) => result, (any) => reject, (any) => any));
 
-    assertPromiseType<TResult>(promise.then((result) => anyOf2(reject, result)));
+    assertPromiseType<angular.IPromise<never> | TResult>(promise.then((result) => anyOf2(reject, result)));
     assertPromiseType<TResult>(promise.then((result) => anyOf3(result, tresultPromise, reject)));
     assertPromiseType<TResult>(promise.then(
         (result) => anyOf3(reject, result, tresultPromise),
         (reason) => anyOf3(reject, tresult, tresultPromise)
     ));
 
-    assertPromiseType<ng.IHttpPromiseCallbackArg<TResult>>(promise.then((result) => tresultHttpPromise));
+    assertPromiseType<ng.IHttpResponse<TResult>>(promise.then((result) => tresultHttpPromise));
 
     assertPromiseType<TResult | TOther>(promise.then((result) => result, (any) => tother));
-    assertPromiseType<TResult | TOther>(promise.then(
+    assertPromiseType<TResult | angular.IPromise<TResult> | angular.IPromise<never> | TOther | angular.IPromise<TOther>>(promise.then(
         (result) => anyOf3(reject, result, totherPromise),
         (reason) => anyOf3(reject, tother, tresultPromise)
     ));
@@ -549,8 +587,8 @@ namespace TestPromise {
     assertPromiseType<TResult | TOther>(promise.then((result) => result, (any) => tother, (any) => any));
     assertPromiseType<TResult | TOther>(promise.then((result) => tresultPromise, (any) => totherPromise));
     assertPromiseType<TResult | TOther>(promise.then((result) => tresultPromise, (any) => totherPromise, (any) => any));
-    assertPromiseType<ng.IHttpPromiseCallbackArg<TResult | TOther>>(promise.then((result) => tresultHttpPromise, (any) => totherHttpPromise));
-    assertPromiseType<ng.IHttpPromiseCallbackArg<TResult | TOther>>(promise.then((result) => tresultHttpPromise, (any) => totherHttpPromise, (any) => any));
+    assertPromiseType<ng.IHttpResponse<TResult | TOther>>(promise.then((result) => tresultHttpPromise, (any) => totherHttpPromise));
+    assertPromiseType<ng.IHttpResponse<TResult | TOther>>(promise.then((result) => tresultHttpPromise, (any) => totherHttpPromise, (any) => any));
 
     assertPromiseType<TOther>(promise.then((result) => tother));
     assertPromiseType<TOther>(promise.then((result) => tother, (any) => any));
@@ -558,9 +596,9 @@ namespace TestPromise {
     assertPromiseType<TOther>(promise.then((result) => totherPromise));
     assertPromiseType<TOther>(promise.then((result) => totherPromise, (any) => any));
     assertPromiseType<TOther>(promise.then((result) => totherPromise, (any) => any, (any) => any));
-    assertPromiseType<ng.IHttpPromiseCallbackArg<TOther>>(promise.then((result) => totherHttpPromise));
-    assertPromiseType<ng.IHttpPromiseCallbackArg<TOther>>(promise.then((result) => totherHttpPromise, (any) => any));
-    assertPromiseType<ng.IHttpPromiseCallbackArg<TOther>>(promise.then((result) => totherHttpPromise, (any) => any, (any) => any));
+    assertPromiseType<ng.IHttpResponse<TOther>>(promise.then((result) => totherHttpPromise));
+    assertPromiseType<ng.IHttpResponse<TOther>>(promise.then((result) => totherHttpPromise, (any) => any));
+    assertPromiseType<ng.IHttpResponse<TOther>>(promise.then((result) => totherHttpPromise, (any) => any, (any) => any));
 
     assertPromiseType<boolean>(promise.then((result) => tresult, (any) => tother).then(ambiguous => isTResult(ambiguous) ? ambiguous.c : ambiguous.f));
 
@@ -568,13 +606,13 @@ namespace TestPromise {
     assertPromiseType<any>(promise.catch((err) => err));
     assertPromiseType<any>(promise.catch((err) => any));
     assertPromiseType<TResult>(promise.catch((err) => tresult));
-    assertPromiseType<TResult>(promise.catch((err) => anyOf2(tresult, reject)));
+    assertPromiseType<TResult | angular.IPromise<never>>(promise.catch((err) => anyOf2(tresult, reject)));
     assertPromiseType<TResult>(promise.catch((err) => anyOf3(tresult, tresultPromise, reject)));
     assertPromiseType<TResult>(promise.catch((err) => tresultPromise));
-    assertPromiseType<ng.IHttpPromiseCallbackArg<TResult>>(promise.catch((err) => tresultHttpPromise));
+    assertPromiseType<TResult | ng.IHttpResponse<TResult>>(promise.catch((err) => tresultHttpPromise));
     assertPromiseType<TResult | TOther>(promise.catch((err) => tother));
     assertPromiseType<TResult | TOther>(promise.catch((err) => totherPromise));
-    assertPromiseType<TResult | ng.IHttpPromiseCallbackArg<TOther>>(promise.catch((err) => totherHttpPromise));
+    assertPromiseType<TResult | ng.IHttpResponse<TOther>>(promise.catch((err) => totherHttpPromise));
 
     assertPromiseType<boolean>(promise.catch((err) => tother).then(ambiguous => isTResult(ambiguous) ? ambiguous.c : ambiguous.f));
 
@@ -589,17 +627,19 @@ function test_angular_forEach() {
     const log: string[] = [];
     angular.forEach(values, (value, key, obj) => {
         obj[key] = value;
-        this.push(key + ': ' + value);
+        this.push(`${key}: ${value}`);
     }, log);
     // expect(log).toEqual(['name: misko', 'gender: male']);
 }
 
 // angular.element() tests
-let element = angular.element('div.myApp');
+let element = angular.element('<div></div>');
 let scope: ng.IScope = element.scope();
 let isolateScope: ng.IScope = element.isolateScope();
-isolateScope = element.find('div.foo').isolateScope();
+isolateScope = element.find('div').isolateScope();
 isolateScope = element.children().isolateScope();
+let element2 = angular.element(element);
+let elementArray = angular.element(document.querySelectorAll('div'));
 
 // $timeout signature tests
 namespace TestTimeout {
@@ -608,9 +648,9 @@ namespace TestTimeout {
         b: string;
         c: boolean;
     }
-    var fnTResult: (...args: any[]) => TResult;
-    var promiseAny: angular.IPromise<any>;
-    var $timeout: angular.ITimeoutService;
+    const fnTResult: (...args: any[]) => TResult = null;
+    const promiseAny: angular.IPromise<any> = null;
+    const $timeout: angular.ITimeoutService = null;
 
     // $timeout
     {
@@ -670,9 +710,7 @@ class SampleDirective implements ng.IDirective {
         return new SampleDirective();
     }
 
-    link(scope: ng.IScope) {
-
-    }
+    link(scope: ng.IScope) {}
 }
 
 class SampleDirective2 implements ng.IDirective {
@@ -688,9 +726,7 @@ class SampleDirective2 implements ng.IDirective {
         return new SampleDirective2();
     }
 
-    link(scope: ng.IScope) {
-
-    }
+    link(scope: ng.IScope) {}
 }
 
 angular.module('SameplDirective', []).directive('sampleDirective', SampleDirective.instance).directive('sameplDirective2', SampleDirective2.instance);
@@ -825,11 +861,10 @@ angular.module('docsTimeDirective', [])
         $scope.format = 'M/d/yy h:mm:ss a';
     }])
     .directive('myCurrentTime', ['$interval', 'dateFilter', ($interval: any, dateFilter: any) => {
-
         return {
             link(scope: ng.IScope, element: ng.IAugmentedJQuery, attrs: ng.IAttributes) {
-                let format: any,
-                    timeoutId: any;
+                let format: any;
+                let timeoutId: any;
 
                 function updateTime() {
                     element.text(dateFilter(new Date(), format));
@@ -904,7 +939,10 @@ angular.module('docsIsoFnBindExample', [])
 angular.module('dragModule', [])
     .directive('myDraggable', ['$document', ($document: any) => {
         return (scope: any, element: any, attr: any) => {
-            let startX = 0, startY = 0, x = 0, y = 0;
+            let startX = 0;
+            let startY = 0;
+            let x = 0;
+            let y = 0;
 
             element.css({
                 position: 'relative',
@@ -988,13 +1026,13 @@ angular.module('multiSlotTranscludeExample', [])
             },
             link(scope, element, attrs, ctrl, transclude) {
                 // without scope
-                transclude().appendTo(element);
-                transclude(clone => clone.appendTo(element));
+                element.append(transclude());
+                transclude(clone => element.append(clone));
 
                 // with scope
-                transclude(scope, clone => clone.appendTo(element));
-                transclude(scope, clone => clone.appendTo(element), element, 'button');
-                transclude(scope, null, element, 'list').addClass('drop-down-list').appendTo(element);
+                transclude(scope, clone => element.append(clone));
+                transclude(scope, clone => element.append(clone), element, 'button');
+                element.append(transclude(scope, null, element, 'list').addClass('drop-down-list'));
             }
         };
     });
@@ -1030,11 +1068,10 @@ interface ICopyExampleUser {
 }
 
 interface ICopyExampleScope {
-
     user: ICopyExampleUser;
     master: ICopyExampleUser;
-    update: (copyExampleUser: ICopyExampleUser) => any;
-    reset: () => any;
+    update(copyExampleUser: ICopyExampleUser): any;
+    reset(): any;
 }
 
 angular.module('copyExample', [])
@@ -1055,8 +1092,7 @@ angular.module('copyExample', [])
     }]);
 
 namespace locationTests {
-
-    var $location: ng.ILocationService;
+    const $location: ng.ILocationService = null;
 
     /*
      * From https://docs.angularjs.org/api/ng/service/$location
@@ -1114,9 +1150,9 @@ namespace locationTests {
 
 // NgModelController
 function NgModelControllerTyping() {
-    var ngModel: angular.INgModelController;
-    var $http: angular.IHttpService;
-    var $q: angular.IQService;
+    const ngModel: angular.INgModelController = null;
+    const $http: angular.IHttpService = null;
+    const $q: angular.IQService = null;
 
     // See https://docs.angularjs.org/api/ng/type/ngModel.NgModelController#$validators
     ngModel.$validators['validCharacters'] = (modelValue, viewValue) => {
@@ -1130,19 +1166,14 @@ function NgModelControllerTyping() {
     ngModel.$asyncValidators['uniqueUsername'] = (modelValue, viewValue) => {
         const value = modelValue || viewValue;
         return $http.get('/api/users/' + value).
-            then(function resolved() {
-                return $q.reject('exists');
-            }, function rejected() {
-                return true;
-            });
+            then(() => $q.reject('exists'), () => true);
     };
 }
 
 let $filter: angular.IFilterService;
 
 function testFilter() {
-
-    var items: string[];
+    const items: string[] = null;
     $filter('filter')(items, 'test');
     $filter('filter')(items, {name: 'test'});
     $filter('filter')(items, (val, index, array) => {
@@ -1224,7 +1255,7 @@ function testCustomFilter() {
 }
 
 function parseTyping() {
-    var $parse: angular.IParseService;
+    const $parse: angular.IParseService = null;
     const compiledExp = $parse('a.b.c');
     if (compiledExp.constant) {
         return compiledExp({});
@@ -1234,7 +1265,7 @@ function parseTyping() {
 }
 
 function parseWithParams() {
-    var $parse: angular.IParseService;
+    const $parse: angular.IParseService = null;
     const compiledExp1 = $parse('a.b.c', () => null);
     const compiledExp2 = $parse('a.b.c', null, false);
 }
@@ -1255,7 +1286,7 @@ function doBootstrap(element: Element | JQuery, mode: string): ng.auto.IInjector
 }
 
 function testIHttpParamSerializerJQLikeProvider() {
-    var serializer: angular.IHttpParamSerializer;
+    const serializer: angular.IHttpParamSerializer = null;
     serializer({
         a: 'b'
     });
@@ -1271,6 +1302,6 @@ function anyOf3<T1, T2, T3>(v1: T1, v2: T2, v3: T3) {
 }
 
 function toPromise<T>(val: T): ng.IPromise<T> {
-    var p: ng.IPromise<T>;
+    const p: ng.IPromise<T> = null;
     return p;
 }

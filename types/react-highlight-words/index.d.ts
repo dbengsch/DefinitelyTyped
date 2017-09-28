@@ -2,9 +2,9 @@
 // Project: https://github.com/bvaughn/react-highlight-words#readme
 // Definitions by: Mohamed Hegazy <https://github.com/mhegazy>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
-import React = require("react");
+import * as React from "react";
 
 export = Highlighter;
 
@@ -22,13 +22,13 @@ interface HighlighterProps {
     /** Type of tag to wrap around highlighted matches; defaults to mark */
     highlightTag?: string;
     /** Process each search word and text to highlight before comparing (eg remove accents); signature (text: string): string */
-    sanitize?: (text: string) => string;
+    sanitize?(text: string): string;
     /** Array of search words */
     searchWords: string[];
     /** Text to highlight matches in */
     textToHighlight: string;
 }
 
-declare class Highlighter extends React.Component<HighlighterProps, any> {
+declare class Highlighter extends React.Component<HighlighterProps> {
     static propTypes: any;
 }

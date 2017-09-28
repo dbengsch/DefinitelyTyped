@@ -1,4 +1,4 @@
-// Type definitions for vis.js 4.17
+// Type definitions for vis.js 4.18
 // Project: https://github.com/almende/vis
 // Definitions by: Michaël Bitard <https://github.com/MichaelBitard>
 //                 MacLeod Broad <https://github.com/macleodbroad-wf>
@@ -6,17 +6,26 @@
 //                 Severin <https://github.com/seveves>
 //                 kaktus40 <https://github.com/kaktus40>
 //                 Matthieu Maitre <https://github.com/mmaitre314>
+//                 Adam Lewis <https://github.com/supercargo>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-type IdType = string | number;
-type SubgroupType = IdType;
-type DateType = Date | number | string;
-type HeightWidthType = IdType;
-type TimelineTimeAxisScaleType = 'millisecond' | 'second' | 'minute' | 'hour' |
+import { MomentInput, MomentFormatSpecification, Moment } from 'moment';
+export type MomentConstructor1 =
+    (inp?: MomentInput, format?: MomentFormatSpecification, strict?: boolean) => Moment;
+export type MomentConstructor2 =
+    (inp?: MomentInput, format?: MomentFormatSpecification, language?: string, strict?: boolean) => Moment;
+
+export type MomentConstructor = MomentConstructor1 | MomentConstructor2;
+
+export type IdType = string | number;
+export type SubgroupType = IdType;
+export type DateType = Date | number | string;
+export type HeightWidthType = IdType;
+export type TimelineTimeAxisScaleType = 'millisecond' | 'second' | 'minute' | 'hour' |
   'weekday' | 'day' | 'month' | 'year';
-type TimelineEventPropertiesResultWhatType = 'item' | 'background' | 'axis' |
+export type TimelineEventPropertiesResultWhatType = 'item' | 'background' | 'axis' |
   'group-label' | 'custom-time' | 'current-time';
-type TimelineEvents =
+export type TimelineEvents =
   'currentTimeTick' |
   'click' |
   'contextmenu' |
@@ -30,20 +39,20 @@ type TimelineEvents =
   'itemout' |
   'timechange' |
   'timechanged';
-type Graph2dStyleType = 'line' | 'bar' | 'points';
-type Graph2dBarChartAlign = 'left' | 'center' | 'right';
-type Graph2dDrawPointsStyle = 'square' | 'circle';
-type LegendPositionType = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
-type ParametrizationInterpolationType = 'centripetal' | 'chordal' | 'uniform' | 'disabled';
-type TopBottomEnumType = 'top' | 'bottom';
-type RightLeftEnumType = 'right' | 'left';
+export type Graph2dStyleType = 'line' | 'bar' | 'points';
+export type Graph2dBarChartAlign = 'left' | 'center' | 'right';
+export type Graph2dDrawPointsStyle = 'square' | 'circle';
+export type LegendPositionType = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
+export type ParametrizationInterpolationType = 'centripetal' | 'chordal' | 'uniform' | 'disabled';
+export type TopBottomEnumType = 'top' | 'bottom';
+export type RightLeftEnumType = 'right' | 'left';
 
-interface LegendPositionOptions {
+export interface LegendPositionOptions {
   visible?: boolean;
   position?: LegendPositionType;
 }
 
-interface LegendOptions {
+export interface LegendOptions {
   enabled?: boolean;
   icons?: boolean;
   iconSize?: number;
@@ -52,7 +61,7 @@ interface LegendOptions {
   right?: LegendPositionOptions;
 }
 
-interface DataItem {
+export interface DataItem {
   className?: string;
   content: string;
   end?: DateType;
@@ -66,13 +75,12 @@ interface DataItem {
   editable?: boolean;
 }
 
-interface PointItem extends DataItem {
+export interface PointItem extends DataItem {
   x: string;
   y: number;
 }
 
-
-interface DataGroup {
+export interface DataGroup {
   className?: string;
   content: string;
   id: IdType;
@@ -80,9 +88,10 @@ interface DataGroup {
   style?: string;
   subgroupOrder?: string | (() => void);
   title?: string;
+  nestedGroups?: number[];
 }
 
-interface DataGroupOptions {
+export interface DataGroupOptions {
   drawPoints?: Graph2dDrawPointsOption | (() => void); // TODO
   excludeFromLegend?: boolean;
   interpolation?: boolean | InterpolationOptions;
@@ -91,58 +100,58 @@ interface DataGroupOptions {
   yAxisOrientation?: RightLeftEnumType;
 }
 
-interface InterpolationOptions {
+export interface InterpolationOptions {
   parametrization: ParametrizationInterpolationType;
 }
 
-interface TimelineEditableOption {
+export interface TimelineEditableOption {
   add?: boolean;
   remove?: boolean;
   updateGroup?: boolean;
   updateTime?: boolean;
 }
 
-interface TimelineGroupEditableOption {
+export interface TimelineGroupEditableOption {
   add?: boolean;
   remove?: boolean;
   order?: boolean;
 }
 
-interface TimelineMarginItem {
+export interface TimelineMarginItem {
   horizontal?: number;
   vertical?: number;
 }
 
-type TimelineMarginItemType = number | TimelineMarginItem;
+export type TimelineMarginItemType = number | TimelineMarginItem;
 
-interface TimelineMarginOption {
+export interface TimelineMarginOption {
   axis?: number;
   item?: TimelineMarginItemType;
 }
 
-interface TimelineOrientationOption {
+export interface TimelineOrientationOption {
   axis?: string;
   item?: string;
 }
 
-interface TimelineTimeAxisOption {
+export interface TimelineTimeAxisOption {
   scale?: TimelineTimeAxisScaleType;
   step?: number;
 }
 
-type TimelineOptionsConfigureFunction = (option: string, path: string[]) => boolean;
-type TimelineOptionsConfigureType = boolean | TimelineOptionsConfigureFunction;
-type TimelineOptionsDataAttributesType = boolean | string | string[];
-type TimelineOptionsEditableType = boolean | TimelineEditableOption;
-type TimelineOptionsGroupEditableType = boolean | TimelineGroupEditableOption;
-type TimelineOptionsGroupOrderType = string | (() => void); // TODO
-type TimelineOptionsGroupOrderSwapFunction = (fromGroup: any, toGroup: any, groups: DataSet<DataGroup>) => void;
-type TimelineOptionsMarginType = number | TimelineMarginOption;
-type TimelineOptionsOrientationType = string | TimelineOrientationOption;
-type TimelineOptionsSnapFunction = (date: Date, scale: string, step: number) => Date | number;
-// type TimelineOptions =
+export type TimelineOptionsConfigureFunction = (option: string, path: string[]) => boolean;
+export type TimelineOptionsConfigureType = boolean | TimelineOptionsConfigureFunction;
+export type TimelineOptionsDataAttributesType = boolean | string | string[];
+export type TimelineOptionsEditableType = boolean | TimelineEditableOption;
+export type TimelineOptionsGroupEditableType = boolean | TimelineGroupEditableOption;
+export type TimelineOptionsGroupOrderType = string | TimelineOptionsComparisonFunction;
+export type TimelineOptionsGroupOrderSwapFunction = (fromGroup: any, toGroup: any, groups: DataSet<DataGroup>) => void;
+export type TimelineOptionsMarginType = number | TimelineMarginOption;
+export type TimelineOptionsOrientationType = string | TimelineOrientationOption;
+export type TimelineOptionsSnapFunction = (date: Date, scale: string, step: number) => Date | number;
+export type TimelineOptionsComparisonFunction = (a: any, b: any) => number;
 
-interface TimelineOptions {
+export interface TimelineOptions {
   align?: string;
   autoResize?: boolean;
   clickToUse?: boolean;
@@ -154,14 +163,14 @@ interface TimelineOptions {
   groupEditable?: TimelineOptionsGroupEditableType;
   groupOrder?: TimelineOptionsGroupOrderType;
   groupOrderSwap?: TimelineOptionsGroupOrderSwapFunction;
-  groupTemplate?: () => void; // TODO
+  groupTemplate?(item?: any, element?: any, data?: any): any;
   height?: HeightWidthType;
   hiddenDates?: any; // TODO
   horizontalScroll?: boolean;
   itemsAlwaysDraggable?: boolean;
   locale?: string;
   locales?: any; // TODO
-  moment?: () => void; // TODO
+  moment?: MomentConstructor;
   margin?: TimelineOptionsMarginType;
   max?: DateType;
   maxHeight?: HeightWidthType;
@@ -171,17 +180,17 @@ interface TimelineOptions {
   moveable?: boolean;
   multiselect?: boolean;
   multiselectPerGroup?: boolean;
-  onAdd?: () => void; // TODO
-  onAddGroup?: () => void; // TODO
-  onUpdate?: () => void; // TODO
-  onMove?: () => void; // TODO
-  onMoveGroup?: () => void; // TODO
-  onMoving?: () => void; // TODO
-  onRemove?: () => void; // TODO
-  onRemoveGroup?: () => void; // TODO
-  order?: () => void; // TODO
+  onAdd?(): void; // TODO
+  onAddGroup?(): void; // TODO
+  onUpdate?(): void; // TODO
+  onMove?(): void; // TODO
+  onMoveGroup?(): void; // TODO
+  onMoving?(): void; // TODO
+  onRemove?(): void; // TODO
+  onRemoveGroup?(): void; // TODO
+  order?: TimelineOptionsComparisonFunction;
   orientation?: TimelineOptionsOrientationType;
-  rollingMode: boolean;
+  rollingMode?: any;
   selectable?: boolean;
   showCurrentTime?: boolean;
   showMajorLabels?: boolean;
@@ -189,11 +198,11 @@ interface TimelineOptions {
   stack?: boolean;
   snap?: TimelineOptionsSnapFunction;
   start?: DateType;
-  template?: () => void; // TODO
+  template?(item?: any, element?: any, data?: any): any;
   throttleRedraw?: number;
   timeAxis?: TimelineTimeAxisOption;
   type?: string;
-  tooltipOnItemUpdateTime?: boolean | { template: (item: any) => any };
+  tooltipOnItemUpdateTime?: boolean | { template(item: any): any };
   verticalScroll?: boolean;
   width?: HeightWidthType;
   zoomable?: boolean;
@@ -202,18 +211,18 @@ interface TimelineOptions {
   zoomMin?: number;
 }
 
-interface TimelineFitAnimation {
+export interface TimelineFitAnimation {
   duration?: number;
   easingFunction?: string;
 }
 
-type TimelineFitAnimationType = boolean | TimelineFitAnimation;
+export type TimelineFitAnimationType = boolean | TimelineFitAnimation;
 
-interface TimelineFitOptions {
+export interface TimelineFitOptions {
   animation?: TimelineFitAnimationType;
 }
 
-interface TimelineEventPropertiesResult {
+export interface TimelineEventPropertiesResult {
   group?: number;
   item?: number;
   pageX: number;
@@ -231,7 +240,7 @@ interface TimelineEventPropertiesResult {
  *
  * @interface DataSetOptions
  */
-interface DataSetOptions extends DataSetQueueOptions {
+export interface DataSetOptions extends DataSetQueueOptions {
   /**
    * The name of the field containing the id of the items.
    * When data is fetched from a server which uses some specific field to identify items,
@@ -257,7 +266,7 @@ interface DataSetOptions extends DataSetQueueOptions {
   type?: any;
 }
 
-interface DataSetQueueOptions {
+export interface DataSetQueueOptions {
   /**
    * Queue data changes ('add', 'update', 'remove') and flush them at once.
    * The queue can be flushed manually by calling DataSet.flush(),
@@ -276,7 +285,6 @@ interface DataSetQueueOptions {
 }
 
 export class DataSet<T extends DataItem | DataGroup | Node | Edge> {
-
   /**
    * Creates an instance of DataSet.
    *
@@ -504,7 +512,7 @@ export class DataSet<T extends DataItem | DataGroup | Node | Edge> {
  *
  * @interface DataSelectionOptions
  */
-interface DataSelectionOptions<T> {
+export interface DataSelectionOptions<T> {
   /**
    * An array with field names, or an object with current field name
    * and new field name that the field is returned as.
@@ -539,7 +547,7 @@ interface DataSelectionOptions<T> {
    *
    * @memberOf DataSelectionOptions
    */
-  filter?: (item: T) => boolean;
+  filter?(item: T): boolean;
 
   /**
    * Order the items by a field name or custom sort function.
@@ -566,33 +574,33 @@ export class DataView<T extends DataItem | DataGroup> {
   constructor(items: T[]);
 }
 
-type DataItemCollectionType = DataItem[] | DataSet<DataItem> | DataView<DataItem>;
-type DataGroupCollectionType = DataGroup[] | DataSet<DataGroup> | DataView<DataGroup>;
+export type DataItemCollectionType = DataItem[] | DataSet<DataItem> | DataView<DataItem>;
+export type DataGroupCollectionType = DataGroup[] | DataSet<DataGroup> | DataView<DataGroup>;
 
-interface TitleOption {
+export interface TitleOption {
   text?: string;
   style?: string;
 }
 
-interface RangeType {
+export interface RangeType {
   min: IdType;
   max: IdType;
 }
 
-interface DataAxisSideOption {
+export interface DataAxisSideOption {
   range?: RangeType;
-  format?: () => string;
+  format?(): string;
   title?: TitleOption;
 }
 
-interface Graph2dBarChartOption {
+export interface Graph2dBarChartOption {
   width?: number;
   minWidth?: number;
   sideBySide?: boolean;
   align?: Graph2dBarChartAlign;
 }
 
-interface Graph2dDataAxisOption {
+export interface Graph2dDataAxisOption {
   orientation?: TimelineOptionsOrientationType;
   showMinorLabels?: boolean;
   showMajorLabels?: boolean;
@@ -609,24 +617,24 @@ interface Graph2dDataAxisOption {
   right?: DataAxisSideOption;
 }
 
-interface Graph2dDrawPointsOption {
+export interface Graph2dDrawPointsOption {
   enabled?: boolean;
-  onRender?: () => boolean; // TODO
+  onRender?(): boolean; // TODO
   size?: number;
   style: Graph2dDrawPointsStyle;
 }
 
-interface Graph2dShadedOption {
+export interface Graph2dShadedOption {
   orientation?: TopBottomEnumType;
   groupid?: IdType;
 }
 
-type Graph2dOptionBarChart = number | Graph2dBarChartOption;
-type Graph2dOptionDataAxis = boolean | Graph2dDataAxisOption;
-type Graph2dOptionDrawPoints = boolean | Graph2dDrawPointsOption;
-type Graph2dLegendOption = boolean | LegendOptions;
+export type Graph2dOptionBarChart = number | Graph2dBarChartOption;
+export type Graph2dOptionDataAxis = boolean | Graph2dDataAxisOption;
+export type Graph2dOptionDrawPoints = boolean | Graph2dDrawPointsOption;
+export type Graph2dLegendOption = boolean | LegendOptions;
 
-interface Graph2dOptions {
+export interface Graph2dOptions {
   autoResize?: boolean;
   barChart?: Graph2dOptionBarChart;
   clickToUse?: boolean;
@@ -642,7 +650,7 @@ interface Graph2dOptions {
   legend?: Graph2dLegendOption;
   locale?: string;
   locales?: any; // TODO
-  moment?: () => void; // TODO
+  moment?: MomentConstructor;
   max?: DateType;
   maxHeight?: HeightWidthType;
   maxMinorChars?: number;
@@ -797,7 +805,7 @@ export interface VisSelectProperties {
   items: number[];
 }
 
-type NetworkEvents =
+export type NetworkEvents =
   'click' |
   'doubleClick' |
   'oncontext' |
@@ -840,7 +848,6 @@ type NetworkEvents =
  * @implements {INetwork}
  */
 export class Network {
-
   /**
    * Creates an instance of Network.
    *
@@ -1476,12 +1483,12 @@ export interface ViewPortOptions {
   offset?: Position;
 
   /**
-  * For animation you can either use a Boolean to use it with the default options or
-  * disable it or you can define the duration (in milliseconds) and easing function manually.
-  *
-  * @type {(IAnimationOptions | boolean)}
-  * @memberOf IFitOptions
-  */
+   * For animation you can either use a Boolean to use it with the default options or
+   * disable it or you can define the duration (in milliseconds) and easing function manually.
+   *
+   * @type {(IAnimationOptions | boolean)}
+   * @memberOf IFitOptions
+   */
   animation?: AnimationOptions | boolean;
 }
 
@@ -1510,7 +1517,6 @@ export interface MoveToOptions extends ViewPortOptions {
  * @interface IAnimationOptions
  */
 export interface AnimationOptions {
-
   /**
    * The duration (in milliseconds).
    *
@@ -1539,7 +1545,6 @@ export interface AnimationOptions {
  * @interface IFitOptions
  */
 export interface FitOptions {
-
   /**
    * The nodes can be used to zoom to fit only specific nodes in the view.
    *
@@ -1583,7 +1588,6 @@ export interface BoundingBox {
  * @interface IClusterOptions
  */
 export interface ClusterOptions {
-
   /**
    * Optional for all but the cluster method.
    * The cluster module loops over all nodes that are selected to be in the cluster
@@ -1593,7 +1597,7 @@ export interface ClusterOptions {
    *
    * @memberOf IClusterOptions
    */
-  joinCondition?: (nodeOptions: any) => boolean;
+  joinCondition?(nodeOptions: any): boolean;
 
   /**
    * Optional.
@@ -1605,7 +1609,7 @@ export interface ClusterOptions {
    * @type {(clusterOptions: any, childNodesOptions: any[], childEdgesOptions: any[])}
    * @memberOf IClusterOptions
    */
-  processProperties?: (clusterOptions: any, childNodesOptions: any[], childEdgesOptions: any[]) => any;
+  processProperties?(clusterOptions: any, childNodesOptions: any[], childEdgesOptions: any[]): any;
 
   /**
    * Optional.
@@ -1641,7 +1645,6 @@ export interface ClusterOptions {
  * @interface IOpenClusterOptions
  */
 export interface OpenClusterOptions {
-
   /**
    * A function that can be used to manually position the nodes after the cluster is opened.
    * The containedNodesPositions contain the positions of the nodes in the cluster at the
@@ -1656,9 +1659,9 @@ export interface OpenClusterOptions {
    *
    * @memberOf IOpenClusterOptions
    */
-  releaseFunction: (
+  releaseFunction(
     clusterPosition: Position,
-    containedNodesPositions: { [nodeId: string]: Position }) => { [nodeId: string]: Position };
+    containedNodesPositions: { [nodeId: string]: Position }): { [nodeId: string]: Position };
 }
 
 export interface Position {
@@ -1667,7 +1670,6 @@ export interface Position {
 }
 
 export interface Properties {
-
   nodes: string[];
 
   edges: string[];
@@ -1686,7 +1688,7 @@ export interface Properties {
 }
 
 export interface Callback {
-  callback?: (params?: any) => void;
+  callback?(params?: any): void;
 }
 
 export interface Data {
@@ -1711,6 +1713,33 @@ export interface Edge {
   id?: IdType;
 }
 
+export interface Locales {
+    [language: string]: LocaleMessages | undefined;
+    en?: LocaleMessages;
+    de?: LocaleMessages;
+    es?: LocaleMessages;
+    it?: LocaleMessages;
+    nl?: LocaleMessages;
+    'pt-br'?: LocaleMessages;
+    ru?: LocaleMessages;
+}
+
+export interface LocaleMessages {
+    edit: string;
+    del: string;
+    back: string;
+    addNode: string;
+    addEdge: string;
+    editNode: string;
+    editEdge: string;
+    addDescription: string;
+    edgeDescription: string;
+    editEdgeDescription: string;
+    createEdgeError: string;
+    deleteClusterError: string;
+    editClusterError: string;
+}
+
 export interface Options {
   autoResize?: boolean;
 
@@ -1720,7 +1749,7 @@ export interface Options {
 
   locale?: string;
 
-  locales?: string[];
+  locales?: Locales;
 
   clickToUse?: boolean;
 

@@ -1,53 +1,11 @@
 // Type definitions for Snap-SVG 0.4.1
 // Project: https://github.com/adobe-webplatform/Snap.svg
-// Definitions by: Lars Klein <https://github.com/lhk>, Mattanja Kern <https://github.com/mattanja>
+// Definitions by: Lars Klein <https://github.com/lhk>, Mattanja Kern <https://github.com/mattanja>, Andrey Kurdyumov <https://github.com/kant2002>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+/// <reference types="mina" />
 
-declare function mina(a:number, A:number, b:number, B:number, get:Function, set:Function, easing?:(num:number)=>number):mina.AnimationDescriptor;
-declare namespace mina {
-    export interface MinaAnimation {
-        id: string;
-        duration: Function;
-        easing: Function;
-        speed: Function;
-        status: Function;
-        stop: Function;
-    }
-
-    export interface AnimationDescriptor {
-        id: string;
-        start: number;
-        end: number;
-        b: number;
-        s: number;
-        dur: number;
-        spd: number;
-        get(): number;
-        set(slave: number): number;
-        easing(input: number): number;
-        status(): number;
-        status(newStatus: number): void;
-        speed(): number;
-        speed(newSpeed: number): void;
-        duration(): number;
-        duration(newDuration: number): void;
-        stop(): void;
-        pause(): void;
-        resume(): void;
-        update(): void;
-    }
-
-    export function backin(n:number):number;
-    export function backout(n:number):number;
-    export function bounce(n:number):number;
-    export function easein(n:number):number;
-    export function easeinout(n:number):number;
-    export function easeout(n:number):number;
-    export function elastic(n:number):number;
-    export function getById(id:string):AnimationDescriptor;
-    export function linear(n:number):number;
-    export function time():number;
-}
+export = Snap;
+export as namespace Snap;
 
 declare function Snap(width:number|string,height:number|string):Snap.Paper;
 declare function Snap(query:string):Snap.Paper;
@@ -306,8 +264,8 @@ declare namespace Snap {
         el(name:string, attr:Object):Snap.Element;
         filter(filstr:string):Snap.Element;
         gradient(gradient:string):any;
-        g(varargs?:any):any;
-        group(...els:any[]):any;
+        g(varargs?:any):Snap.Paper;
+        group(...els:any[]):Snap.Paper;
         mask(varargs:any):Object;
         ptrn(x:number,y:number,width:number,height:number,vbx:number,vby:number,vbw:number,vbh:number):Object;
         svg(x:number,y:number,width:number,height:number,vbx:number,vby:number,vbw:number,vbh:number):Object;

@@ -8,7 +8,7 @@
 
 import * as d3Ease from 'd3-ease';
 
-const t_in: number = 0.5;
+const t_in = 0.5;
 let t_out: number;
 
 t_out = d3Ease.easeLinear(t_in);
@@ -22,7 +22,6 @@ t_out = d3Ease.easeCubic(t_in);
 t_out = d3Ease.easeCubicIn(t_in);
 t_out = d3Ease.easeCubicOut(t_in);
 t_out = d3Ease.easeCubicInOut(t_in);
-
 
 let easePolyFactory: d3Ease.PolynomialEasingFactory;
 

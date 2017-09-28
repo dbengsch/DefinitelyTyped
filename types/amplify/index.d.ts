@@ -1,7 +1,8 @@
 // Type definitions for AmplifyJs 1.1
 // Project: http://amplifyjs.com/
-// Definitions by: Jonas Eriksson <https://github.com/joeriks/>
+// Definitions by: Jonas Eriksson <https://github.com/joeriks>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// TypeScript Version: 2.3
 
 /// <reference types="jquery" />
 
@@ -9,8 +10,8 @@ declare namespace amplify {
     interface RequestSettings {
         resourceId: string;
         data?: any;
-        success?: (...args: any[]) => void;
-        error?: (...args: any[]) => void;
+        success?(...args: any[]): void;
+        error?(...args: any[]): void;
     }
 
     type Decoder =

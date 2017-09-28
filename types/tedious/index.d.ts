@@ -1,6 +1,7 @@
 // Type definitions for tedious 1.8.0
 // Project: https://pekim.github.io/tedious
 // Definitions by: Rogier Schouten <https://github.com/rogierschouten>
+//                  Chris Thompson <https://github.com/cjthompson>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
 ///<reference types="node" />
@@ -297,7 +298,7 @@ export interface ConnectionConfig {
 
 export interface ParameterOptions {
     //  for VarChar, NVarChar, VarBinary
-    length?: number;
+    length?: number | 'max';
     // precision for Numeric, Decimal
     precision?: number;
     // scale for Numeric, Decimal, Time, DateTime2, DateTimeOffset
@@ -547,4 +548,24 @@ export declare class Connection extends events.EventEmitter {
      */
     close(): void;
 
+}
+
+/**
+ * Error emitted by Connection class 'error' event
+ */
+export declare class ConnectionError extends Error {
+    constructor(message?: string, code?: string);
+
+    public message: string;
+    public code: string;
+}
+
+/**
+ * Error emitted by Request class
+ */
+export declare class RequestError extends Error {
+    constructor(message?: string, code?: string);
+
+    public message: string;
+    public code: string;
 }

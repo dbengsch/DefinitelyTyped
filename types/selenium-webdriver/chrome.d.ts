@@ -24,7 +24,7 @@ export class Driver extends webdriver.WebDriver {
     static createSession(opt_config?: Options | webdriver.CreateSessionCapabilities, opt_service?: remote.DriverService | http.Executor, opt_flow?: webdriver.promise.ControlFlow): Driver;
 }
 
-interface IOptionsValues {
+export interface IOptionsValues {
     args: string[];
     binary?: string;
     detach: boolean;
@@ -34,7 +34,7 @@ interface IOptionsValues {
     prefs?: any;
 }
 
-interface IPerfLoggingPrefs {
+export interface IPerfLoggingPrefs {
     enableNetwork: boolean;
     enablePage: boolean;
     enableTimeline: boolean;
@@ -59,7 +59,6 @@ export class Options {
      */
     static fromCapabilities(capabilities: webdriver.Capabilities): Options;
 
-
     /**
      * Add additional command line arguments to use when launching the Chrome
      * browser.  Each argument may be specified with or without the '--' prefix
@@ -70,6 +69,16 @@ export class Options {
      */
     addArguments(...var_args: string[]): Options;
 
+    /**
+     * Configures the chromedriver to start Chrome in headless mode.
+     *
+     * > __NOTE:__ Resizing the browser window in headless mode is only supported
+     * > in Chrome 60. Users are encouraged to set an initial window size with
+     * > the {@link #windowSize windowSize({width, height})} option.
+     *
+     * @return {!Options} A self reference.
+     */
+    headless(): Options;
 
     /**
      * List of Chrome command line switches to exclude that ChromeDriver by default
@@ -80,7 +89,6 @@ export class Options {
      */
     excludeSwitches(...var_args: string[]): Options;
 
-
     /**
      * Add additional extensions to install when launching Chrome. Each extension
      * should be specified as the path to the packed CRX file, or a Buffer for an
@@ -90,7 +98,6 @@ export class Options {
      * @return {!Options} A self reference.
      */
     addExtensions(...var_args: any[]): Options;
-
 
     /**
      * Sets the path to the Chrome binary to use. On Mac OS X, this path should
@@ -105,7 +112,6 @@ export class Options {
      */
     setChromeBinaryPath(path: string): Options;
 
-
     /**
      * Sets whether to leave the started Chrome browser running if the controlling
      * ChromeDriver service is killed before {@link webdriver.WebDriver#quit()} is
@@ -116,7 +122,6 @@ export class Options {
      */
     detachDriver(detach: boolean): Options;
 
-
     /**
      * Sets the user preferences for Chrome's user profile. See the 'Preferences'
      * file in Chrome's user data directory for examples.
@@ -124,7 +129,6 @@ export class Options {
      * @return {!Options} A self reference.
      */
     setUserPreferences(prefs: any): Options;
-
 
     /**
      * Sets the logging preferences for the new session.
@@ -159,7 +163,6 @@ export class Options {
      */
     setPerfLoggingPrefs(prefs: IPerfLoggingPrefs): Options;
 
-
     /**
      * Sets preferences for the 'Local State' file in Chrome's user data
      * directory.
@@ -167,7 +170,6 @@ export class Options {
      * @return {!Options} A self reference.
      */
     setLocalState(state: any): Options;
-
 
     /**
      * Sets the name of the activity hosting a Chrome-based Android WebView. This
@@ -179,7 +181,6 @@ export class Options {
      */
     androidActivity(name: string): Options;
 
-
     /**
      * Sets the device serial number to connect to via ADB. If not specified, the
      * ChromeDriver will select an unused device at random. An error will be
@@ -190,7 +191,6 @@ export class Options {
      */
     androidDeviceSerial(serial: string): Options;
 
-
     /**
      * Configures the ChromeDriver to launch Chrome on Android via adb. This
      * function is shorthand for
@@ -198,7 +198,6 @@ export class Options {
      * @return {!Options} A self reference.
      */
     androidChrome(): Options;
-
 
     /**
      * Sets the package name of the Chrome or WebView app.
@@ -208,7 +207,6 @@ export class Options {
      * @return {!Options} A self reference.
      */
     androidPackage(pkg: string): Options;
-
 
     /**
      * Sets the process name of the Activity hosting the WebView (as given by `ps`).
@@ -220,7 +218,6 @@ export class Options {
      */
     androidProcess(processName: string): Options;
 
-
     /**
      * Sets whether to connect to an already-running instead of the specified
      * {@linkplain #androidProcess app} instead of launching the app with a clean
@@ -231,7 +228,6 @@ export class Options {
      */
     androidUseRunningApp(useRunning: boolean): Options;
 
-
     /**
      * Sets the path to Chrome's log file. This path should exist on the machine
      * that will launch Chrome.
@@ -240,7 +236,6 @@ export class Options {
      */
     setChromeLogFile(path: string): Options;
 
-
     /**
          * Sets the directory to store Chrome minidumps in. This option is only
          * supported when ChromeDriver is running on Linux.
@@ -248,7 +243,6 @@ export class Options {
          * @return {!Options} A self reference.
          */
     setChromeMinidumpPath(path: string): Options;
-
 
     /**
      * Configures Chrome to emulate a mobile device. For more information, refer
@@ -295,7 +289,6 @@ export class Options {
      */
     setProxy(proxy: webdriver.ProxyConfig): Options;
 
-
     /**
      * Converts this options instance to a {@link webdriver.Capabilities} object.
      * @param {webdriver.Capabilities=} opt_capabilities The capabilities to merge
@@ -330,7 +323,6 @@ export class ServiceBuilder extends remote.DriverService.Builder {
      */
     setAdbPort(port: number): this;
 
-
     /**
      * Sets the path of the log file the driver should log to. If a log file is
      * not specified, the driver will log to stderr.
@@ -339,13 +331,11 @@ export class ServiceBuilder extends remote.DriverService.Builder {
      */
     loggingTo(path: string): this;
 
-
     /**
      * Enables verbose logging.
      * @return {!ServiceBuilder} A self reference.
      */
     enableVerboseLogging(): this;
-
 
     /**
      * Sets the number of threads the driver should use to manage HTTP requests.

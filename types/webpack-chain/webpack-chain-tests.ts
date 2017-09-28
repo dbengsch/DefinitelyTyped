@@ -13,7 +13,7 @@ config
 	.context('')
 	.externals('foo')
 	.externals(/node_modules/)
-	.externals({ 'test': false, 'foo': 'bar' })
+	.externals({ test: false, foo: 'bar' })
 	.externals(['foo', 'bar'])
 	.externals((context, request, cb) => cb(null, true))
 	.loader({})
@@ -29,11 +29,13 @@ config
 	.target('web')
 	.watch(true)
 	.watchOptions({})
+	.when(false, config => config.watch(true), config => config.watch(false))
 
 	.entry('main')
 		.add('index.js')
 		.delete('index.js')
 		.clear()
+		.when(false, entry => entry.clear(), entry => entry.clear())
 		.end()
 
 	.entryPoints
@@ -71,18 +73,24 @@ config
 			errors: true,
 		})
 		.port(8080)
+		.progress(true)
 		.proxy({})
+		.public('foo')
+		.publicPath('bar')
 		.quiet(false)
 		.setup(app => {})
+		.staticOptions({})
 		.stats({
 			reasons: true,
 			errors: true,
 			warnings: false,
 		})
 		.watchContentBase(true)
+		.watchOptions({})
 		.end()
 
 	.module
+		.noParse(/.min.js$/)
 		.rule('compile')
 			.test(/.js$/)
 			.include

@@ -47,7 +47,7 @@ sharp('input.jpg')
         // containing a scaled and cropped version of input.jpg
     });
 
-var transformer = sharp()
+let transformer = sharp()
     .resize(300)
     .on('info', (info: sharp.OutputInfo) => {
         console.log('Image height is ' + info.height);
@@ -58,7 +58,7 @@ console.log(sharp.format);
 console.log(sharp.versions);
 
 sharp.queue.on('change', (queueLength: number) => {
-    console.log('Queue contains ' + queueLength + ' task(s)');
+    console.log(`Queue contains ${queueLength} task(s)`);
 });
 
 let pipeline: sharp.SharpInstance = sharp().rotate();
@@ -200,3 +200,9 @@ let simd: boolean = sharp.simd();
 
 simd = sharp.simd(true);
 // attempts to enable the use of SIMD, returning true if available
+
+const vipsVersion: string = sharp.versions.vips;
+
+if (sharp.versions.cairo) {
+    const cairoVersion: string = sharp.versions.cairo;
+}

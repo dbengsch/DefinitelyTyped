@@ -2,7 +2,7 @@
 // Project: https://github.com/idiotWu/react-smooth-scrollbar
 // Definitions by: Alexey Svetliakov <https://github.com/asvetliakov>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.1
+// TypeScript Version: 2.3
 
 import * as React from "react";
 import SmoothScrollbar, { ScrollbarOptions, ScrollStatusObject } from "smooth-scrollbar";
@@ -12,7 +12,7 @@ declare namespace Scrollbar {
         /**
          * Pipe to scrollbar.addListener()
          */
-        onScroll?: (status: ScrollStatusObject, scrollbarInstance: SmoothScrollbar) => void;
+        onScroll?(status: ScrollStatusObject, scrollbarInstance: SmoothScrollbar): void;
         /**
          * Keep scrollbar tracks visible whether it's scrolling or not
          * @default false
@@ -29,12 +29,11 @@ declare namespace Scrollbar {
     }
 }
 
-declare class Scrollbar extends React.Component<Scrollbar.ScrollbarProps, {}> {
+declare class Scrollbar extends React.Component<Scrollbar.ScrollbarProps> {
     /**
      * Scrollbar instance
      */
     readonly scrollbar: SmoothScrollbar;
-
 }
 
 export as namespace Scrollbar;

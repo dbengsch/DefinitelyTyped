@@ -8,29 +8,26 @@ import * as geojson from 'geojson';
 
 declare module 'highcharts' {
     interface Static {
-        mapChart(renderTo: string | HTMLElement, options: MapOptions, callback?: (chart: highcharts.ChartObject) => void): highcharts.ChartObject;
+        mapChart(renderTo: string | HTMLElement, options: MapOptions, callback?: (chart: ChartObject) => void): ChartObject;
     }
 
     interface MapOptions {
-        chart?: highcharts.ChartOptions;
-
-        legend?: highcharts.LegendOptions;
-
+        chart?: ChartOptions;
+        legend?: LegendOptions;
         mapNavigation?: Navigation;
-
+        plotOptions?: PlotOptions;
         series?: MapSeriesOptions[];
-
         colorAxis?: ColorAxis;
-
-        title?: highcharts.TitleOptions;
+        title?: TitleOptions;
+        tooltip?: TooltipOptions;
     }
 
     interface MapSeriesOptions {
-        data?: number[] | [number, number][] | [string, number][] | highcharts.DataPoint[];
+        data?: number[] | Array<[number, number]> | Array<[string, number]> |  DataPoint[];
 
         dataLabels?: MapSeriesOptionsDataLabels;
 
-        joinBy?: Array<string>;
+        joinBy?: string[];
 
         mapData?: geojson.GeoJsonObject;
 
